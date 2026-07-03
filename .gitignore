@@ -1,0 +1,8 @@
+# nothing to build; keep the repo to the single self-contained demo + docs
+.DS_Store
+Thumbs.db
+*.log
+
+# never commit real personal health data into this public repo
+longevity-os-dashboard.html
+*private*

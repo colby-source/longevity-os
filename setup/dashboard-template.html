@@ -1,0 +1,1550 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Longevity OS — an all-in-one personal longevity dashboard: genetics, labs, gut, WHOOP, supplements, peptides and an AI coach in one brain.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Longevity OS — personal longevity dashboard">
+<meta property="og:description" content="Genetics + labs + gut + WHOOP + supplements + peptides in one clean longevity brain. Live sample dashboard.">
+<title>Longevity OS — Command Center</title>
+<style>
+  :root{
+    --bg:#eef1f6; --panel:#ffffff; --panel-2:#f5f8fc; --line:#e0e6ee;
+    --text:#0f1720; --muted:#59657280; --muted-solid:#5a6673;
+    --accent:#4b5fe0; --accent-weak:#4b5fe01a;
+    --good:#0f7a44; --good-weak:#0f7a4419;
+    --warn:#8a5910; --warn-weak:#8a591019;
+    --bad:#cf3c2b; --bad-weak:#cf3c2b17;
+    --shadow:0 1px 2px #0c132008, 0 8px 24px #0c132010;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Consolas,monospace;
+    --sans:ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0a0d12; --panel:#131a23; --panel-2:#0e141c; --line:#212c38;
+      --text:#e6ebf1; --muted:#8493a1; --muted-solid:#8493a1;
+      --accent:#7f8cff; --accent-weak:#7f8cff1f;
+      --good:#46c46a; --good-weak:#46c46a1e;
+      --warn:#e0a33b; --warn-weak:#e0a33b1c;
+      --bad:#e5544b; --bad-weak:#e5544b1c;
+      --shadow:0 1px 2px #0006, 0 10px 30px #0008;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#eef1f6; --panel:#ffffff; --panel-2:#f5f8fc; --line:#e0e6ee;
+    --text:#0f1720; --muted-solid:#5a6673;
+    --accent:#4b5fe0; --accent-weak:#4b5fe01a;
+    --good:#0f7a44; --good-weak:#0f7a4419; --warn:#8a5910; --warn-weak:#8a591019;
+    --bad:#cf3c2b; --bad-weak:#cf3c2b17; --shadow:0 1px 2px #0c132008,0 8px 24px #0c132010;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0a0d12; --panel:#131a23; --panel-2:#0e141c; --line:#212c38;
+    --text:#e6ebf1; --muted-solid:#8493a1;
+    --accent:#7f8cff; --accent-weak:#7f8cff1f;
+    --good:#46c46a; --good-weak:#46c46a1e; --warn:#e0a33b; --warn-weak:#e0a33b1c;
+    --bad:#e5544b; --bad-weak:#e5544b1c; --shadow:0 1px 2px #0006,0 10px 30px #0008;
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--sans);
+    font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+    font-variant-numeric:tabular-nums;
+  }
+  .num{font-family:var(--mono); font-variant-numeric:tabular-nums}
+  h1,h2,h3{margin:0; text-wrap:balance; font-weight:650; letter-spacing:-0.01em}
+  .eyebrow{font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted-solid); font-weight:600}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:6px}
+  button{font-family:inherit; color:inherit; cursor:pointer}
+
+  /* layout */
+  .app{display:grid; grid-template-columns:224px 1fr; min-height:100vh}
+  .rail{background:var(--panel-2); border-right:1px solid var(--line); padding:18px 14px; position:sticky; top:0; height:100vh; overflow-y:auto}
+  .brand{display:flex; align-items:center; gap:10px; padding:4px 8px 18px}
+  .brand .mark{width:26px; height:26px; border-radius:7px; background:var(--accent); position:relative; flex:none; box-shadow:0 0 0 4px var(--accent-weak)}
+  .brand .mark::after{content:""; position:absolute; inset:6px; border-radius:3px; border:2px solid #fff9; }
+  .brand b{font-size:14.5px; letter-spacing:-.02em}
+  .brand span{display:block; font-size:10px; color:var(--muted-solid); letter-spacing:.06em}
+  nav{display:flex; flex-direction:column; gap:2px}
+  .navitem{display:flex; align-items:center; gap:11px; padding:9px 11px; border-radius:9px; border:0; background:transparent; width:100%; text-align:left; font-size:13.5px; color:var(--muted-solid); font-weight:550}
+  .navitem svg{width:17px; height:17px; flex:none; stroke:currentColor; fill:none; stroke-width:1.7}
+  .navitem:hover{background:var(--panel); color:var(--text)}
+  .navitem.active{background:var(--accent-weak); color:var(--accent)}
+  .rail .foot{margin-top:16px; padding:12px 10px; border-top:1px solid var(--line); font-size:11px; color:var(--muted-solid)}
+
+  main{min-width:0}
+  .topbar{position:sticky; top:0; z-index:20; display:flex; align-items:center; gap:14px; padding:14px 26px; background:color-mix(in srgb,var(--bg) 82%, transparent); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+  .topbar .title{min-width:0}
+  .topbar .title h1{font-size:18px}
+  .topbar .title p{margin:2px 0 0; font-size:12px; color:var(--muted-solid)}
+  .spacer{flex:1}
+  .chip{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; padding:4px 9px; border-radius:999px; border:1px solid var(--line); background:var(--panel); color:var(--muted-solid)}
+  .chip .dot{width:6px; height:6px; border-radius:50%; background:var(--good)}
+  select{appearance:none; font-family:inherit; font-size:12.5px; font-weight:550; color:var(--text); background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:8px 30px 8px 12px; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238493a1' stroke-width='2.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 10px center}
+  .iconbtn{width:36px; height:36px; display:grid; place-items:center; border-radius:9px; border:1px solid var(--line); background:var(--panel)}
+  .iconbtn svg{width:17px; height:17px; stroke:currentColor; fill:none; stroke-width:1.8}
+  .menubtn{display:none}
+  input[type="range"]{width:100%; accent-color:var(--accent); cursor:pointer; height:5px}
+  .trackbar{display:flex; align-items:center; gap:10px; margin:10px 0}
+  .trackbar .tl{width:64px; font-size:10.5px; color:var(--muted-solid); text-transform:uppercase; letter-spacing:.05em; flex:none}
+  .trackbar .tt{flex:1; height:9px; border-radius:5px; background:var(--panel-2); border:1px solid var(--line); overflow:hidden}
+  .trackbar .tt i{display:block; height:100%; border-radius:5px}
+  .trackbar .tv{width:98px; text-align:right; font-family:var(--mono); font-size:12px; flex:none}
+  .foodlog{display:flex; flex-direction:column; gap:10px; max-height:290px; overflow-y:auto}
+  .foodrow{display:flex; align-items:center; gap:11px}
+  .foodrow img{width:44px; height:44px; border-radius:9px; object-fit:cover; flex:none; background:var(--panel-2); border:1px solid var(--line)}
+  .foodrow .fi{flex:1; min-width:0}
+  .foodrow .fi b{font-size:13px; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .foodrow .fm{font-family:var(--mono); font-size:11.5px; color:var(--muted-solid)}
+  .photodrop{display:grid; place-items:center; gap:7px; border:2px dashed var(--line); border-radius:13px; padding:26px; text-align:center; cursor:pointer; color:var(--muted-solid); font-size:13px; margin-top:6px}
+  .photodrop:hover{border-color:var(--accent); color:var(--accent)}
+  .photodrop svg{stroke:currentColor; fill:none}
+  #foodpreview,#peppreview{width:100%; max-height:210px; object-fit:cover; border-radius:12px; margin-top:11px; display:none}
+  .pepbar{display:flex; align-items:center; gap:9px; padding:10px 14px; border-radius:11px; background:var(--warn-weak); border:1px solid color-mix(in srgb,var(--warn) 30%, transparent); color:var(--text); font-size:12px; margin-bottom:16px}
+  .pepbar b{color:var(--warn)}
+  .pepcard{border:1px solid var(--line); border-radius:14px; background:var(--panel); overflow:hidden}
+  .pepcard .ph{display:flex; justify-content:space-between; align-items:flex-start; gap:10px; padding:13px 15px; border-bottom:1px solid var(--line); background:var(--panel-2)}
+  .pepcard .pname{font-weight:700; font-size:15px}
+  .pepcard .paka{font-size:11px; color:var(--muted-solid); font-family:var(--mono)}
+  .cyclepill{font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap}
+  .pepbody{padding:13px 15px}
+  .doseecho{display:flex; gap:7px; flex-wrap:wrap; margin:0 0 10px}
+  .dosecell{background:var(--panel-2); border:1px solid var(--line); border-radius:9px; padding:7px 9px; text-align:center; min-width:58px; flex:1}
+  .dosecell .dv{font-family:var(--mono); font-size:16px; font-weight:600}
+  .dosecell .dl{font-size:9px; color:var(--muted-solid); text-transform:uppercase; letter-spacing:.05em; margin-top:1px}
+  .peprow{display:flex; justify-content:space-between; gap:12px; font-size:12.5px; padding:6px 0; border-top:1px solid var(--line)}
+  .peprow .k{color:var(--muted-solid); flex:none}
+  .peprow span:last-child{text-align:right}
+  .pepnext{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:12px; padding:10px 12px; border-radius:11px; background:var(--accent-weak)}
+  .schedgrid{display:grid; grid-template-columns:repeat(7,1fr); gap:7px}
+  .schedday{border:1px solid var(--line); border-radius:10px; padding:9px 5px; text-align:center; min-height:78px; background:var(--panel-2)}
+  .schedday .dn{font-size:10px; color:var(--muted-solid); text-transform:uppercase; letter-spacing:.04em}
+  .pdot{font-size:10px; font-weight:700; margin-top:6px; padding:3px 4px; border-radius:6px; display:block}
+  .schedday.off{opacity:.5}
+  .site{display:inline-flex; align-items:center; gap:5px; padding:8px 11px; border-radius:9px; border:1px solid var(--line); background:var(--panel-2); font-size:12px; font-weight:550}
+  .site.next{border-color:var(--accent); background:var(--accent-weak); color:var(--accent); font-weight:700}
+  .calc{display:grid; grid-template-columns:repeat(3,1fr); gap:10px}
+  .calcout{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  details.retired{padding:14px 17px}
+  details.retired summary{cursor:pointer; font-weight:600; font-size:13px}
+  details.retired .ret{display:flex; justify-content:space-between; gap:10px; font-size:12.5px; padding:9px 0; border-top:1px solid var(--line); color:var(--muted-solid)}
+  details.retired .ret:first-of-type{margin-top:8px}
+  @media (max-width:640px){ .calc{grid-template-columns:1fr} .schedgrid{grid-template-columns:repeat(4,1fr)} }
+
+  .view{display:none; padding:22px 26px 60px}
+  .view.active{display:block; animation:fade .28s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+  @media (prefers-reduced-motion:reduce){ .view.active{animation:none} }
+
+  .grid{display:grid; gap:16px}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:15px; padding:17px; box-shadow:var(--shadow)}
+  .card h3{font-size:13px; letter-spacing:-.01em}
+  .card .sub{font-size:11.5px; color:var(--muted-solid); margin-top:2px}
+  .cardhead{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:14px}
+
+  .hero{grid-template-columns:1.15fr 1fr 1fr}
+  .bigstat{font-family:var(--mono); font-size:44px; font-weight:600; letter-spacing:-.03em; line-height:1}
+  .delta{display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:650; padding:3px 8px; border-radius:999px}
+  .delta.up{color:var(--good); background:var(--good-weak)}
+  .delta.down{color:var(--bad); background:var(--bad-weak)}
+  .delta.flat{color:var(--muted-solid); background:var(--panel-2)}
+  .ringwrap{display:flex; align-items:center; gap:16px}
+  .ringwrap canvas{width:104px; height:104px; flex:none}
+  .kpis{grid-template-columns:repeat(4,1fr)}
+  .kpi .top{display:flex; justify-content:space-between; align-items:center; gap:8px}
+  .kpi .val{font-family:var(--mono); font-size:26px; font-weight:600; letter-spacing:-.02em; margin:8px 0 2px}
+  .kpi .unit{font-size:12px; color:var(--muted-solid); font-weight:500}
+  .kpi canvas{width:100%; height:34px; display:block; margin-top:6px}
+  .kpi .tgt{font-size:11px; color:var(--muted-solid); margin-top:7px}
+
+  /* range bar */
+  .rb{margin-top:9px}
+  .rbtrack{position:relative; height:8px; border-radius:6px; background:linear-gradient(90deg,var(--bad-weak),var(--warn-weak),var(--good-weak),var(--warn-weak),var(--bad-weak)); overflow:visible}
+  .rbfill{position:absolute; inset:0; border-radius:6px; opacity:.5}
+  .rbdot{position:absolute; top:50%; width:12px; height:12px; border-radius:50%; transform:translate(-50%,-50%); border:2.5px solid var(--panel); box-shadow:0 0 0 1.5px currentColor}
+  .rbscale{display:flex; justify-content:space-between; font-size:10px; color:var(--muted-solid); margin-top:6px}
+
+  .biomarker{border:1px solid var(--line); border-radius:13px; padding:14px; background:var(--panel)}
+  .biomarker .mh{display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+  .biomarker .name{font-weight:600; font-size:13.5px}
+  .biomarker .meta{font-size:11px; color:var(--muted-solid)}
+  .biomarker .value{font-family:var(--mono); font-size:20px; font-weight:600}
+  .statuspill{font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; letter-spacing:.02em; text-transform:uppercase}
+  .s-good{color:var(--good); background:var(--good-weak)}
+  .s-warn{color:var(--warn); background:var(--warn-weak)}
+  .s-bad{color:var(--bad); background:var(--bad-weak)}
+  .tagrow{display:flex; flex-wrap:wrap; gap:6px; margin-top:11px}
+  .tag{font-size:10.5px; font-weight:600; padding:3px 8px; border-radius:7px; background:var(--panel-2); border:1px solid var(--line); color:var(--muted-solid)}
+  .tag.gene{color:var(--accent); background:var(--accent-weak); border-color:transparent}
+
+  .diffstrip{display:flex; gap:12px; overflow-x:auto; padding-bottom:4px}
+  .diffcard{flex:none; min-width:150px; border:1px solid var(--line); border-radius:12px; padding:12px; background:var(--panel-2)}
+  .diffcard .d{font-family:var(--mono); font-size:18px; font-weight:600}
+
+  .listrow{display:flex; align-items:center; gap:12px; padding:11px 0; border-top:1px solid var(--line)}
+  .listrow:first-child{border-top:0}
+  .sysbadge{font-size:10px; font-weight:700; padding:3px 8px; border-radius:7px; background:var(--accent-weak); color:var(--accent); letter-spacing:.03em; flex:none}
+
+  .action{display:flex; gap:14px; align-items:flex-start; padding:15px; border-radius:13px; background:var(--accent-weak); border:1px solid color-mix(in srgb,var(--accent) 26%, transparent)}
+  .action .n{width:30px;height:30px;border-radius:9px; background:var(--accent); color:#fff; display:grid;place-items:center; font-weight:700; flex:none}
+
+  table{width:100%; border-collapse:collapse; font-size:12.5px}
+  th,td{text-align:left; padding:9px 10px; border-bottom:1px solid var(--line)}
+  th{font-size:10.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted-solid); font-weight:600}
+  .scrollx{overflow-x:auto}
+
+  .genecard{border:1px solid var(--line); border-radius:13px; padding:14px; background:var(--panel)}
+  .genecard .gh{display:flex; justify-content:space-between; align-items:center; gap:8px}
+  .genecard .gene{font-weight:700; font-size:14px; letter-spacing:.01em}
+  .genecard .geno{font-family:var(--mono); font-size:11px; color:var(--muted-solid)}
+  .genecard p{margin:9px 0 0; font-size:12.5px; color:var(--text)}
+  .genecard .act{margin-top:9px; font-size:12px; color:var(--muted-solid)}
+  .confirm{font-size:10px; font-weight:700; color:var(--good); background:var(--good-weak); padding:2px 7px; border-radius:999px}
+  .carrier{font-size:10px; font-weight:700; color:var(--warn); background:var(--warn-weak); padding:2px 7px; border-radius:999px}
+
+  .food{display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:9px; background:var(--panel-2); font-size:12.5px; border:1px solid var(--line)}
+  .food .fk{width:7px; height:7px; border-radius:50%; flex:none}
+
+  .timeline{position:relative; padding-left:20px}
+  .timeline::before{content:""; position:absolute; left:5px; top:6px; bottom:6px; width:2px; background:var(--line)}
+  .tl{position:relative; padding:8px 0 8px 4px}
+  .tl::before{content:""; position:absolute; left:-19px; top:13px; width:10px; height:10px; border-radius:50%; background:var(--accent); border:2px solid var(--panel)}
+  .tl .t{font-family:var(--mono); font-size:12px; font-weight:600}
+  .tl .items{font-size:12px; color:var(--muted-solid); margin-top:2px}
+
+  .chat{display:flex; flex-direction:column; gap:14px; max-width:820px}
+  .bubble{padding:13px 15px; border-radius:14px; font-size:13.5px}
+  .bubble.me{background:var(--accent-weak); align-self:flex-end; max-width:75%; border:1px solid color-mix(in srgb,var(--accent) 20%,transparent)}
+  .bubble.ai{background:var(--panel); border:1px solid var(--line)}
+  .bubble.ai .toolrow{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 10px}
+  .toolchip{font-family:var(--mono); font-size:10.5px; padding:3px 8px; border-radius:7px; background:var(--panel-2); border:1px solid var(--line); color:var(--accent)}
+  .bubble.ai b{color:var(--text)}
+  .evi{display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:5px; background:var(--good-weak); color:var(--good)}
+  .disclaimer{font-size:11px; color:var(--muted-solid); border:1px dashed var(--line); border-radius:11px; padding:11px 13px; background:var(--panel-2)}
+
+  .corr{display:flex; align-items:center; gap:14px; padding:12px 0; border-top:1px solid var(--line)}
+  .corr:first-child{border-top:0}
+  .corr .lab{width:210px; flex:none; font-size:13px; font-weight:550}
+  .corr .barwrap{flex:1; height:20px; position:relative; background:var(--panel-2); border-radius:6px}
+  .corr .bar{position:absolute; top:0; bottom:0; border-radius:6px; opacity:.85}
+  .corr .mid{position:absolute; left:50%; top:-4px; bottom:-4px; width:1px; background:var(--line)}
+  .corr .pct{width:74px; text-align:right; font-family:var(--mono); font-weight:600; font-size:13px; flex:none}
+
+  .sec-title{display:flex; align-items:center; gap:10px; margin:26px 2px 12px}
+  .sec-title:first-child{margin-top:4px}
+  .sec-title h2{font-size:15px}
+  .sec-title .ln{flex:1; height:1px; background:var(--line)}
+
+  @media (max-width:1080px){ .hero{grid-template-columns:1fr 1fr} .kpis{grid-template-columns:repeat(2,1fr)} }
+  @media (max-width:820px){
+    .app{grid-template-columns:1fr}
+    .rail{position:fixed; left:0; top:0; width:232px; z-index:45; transform:translateX(-104%); transition:transform .25s ease; box-shadow:0 0 44px #0008}
+    .rail.open{transform:none}
+    .menubtn{display:grid !important}
+    .topbar{flex-wrap:wrap; row-gap:8px}
+    .hero,.kpis{grid-template-columns:1fr}
+    .cols-2,.cols-3{grid-template-columns:1fr !important}
+  }
+  .cols-2{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:1fr 1fr 1fr}
+
+  .navgroup{font-size:9.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted-solid); font-weight:700; padding:15px 12px 5px; opacity:.6}
+  .macros{grid-template-columns:repeat(5,1fr)}
+  .macro{border:1px solid var(--line); border-radius:12px; padding:13px; background:var(--panel); text-align:center}
+  .macro .v{font-family:var(--mono); font-size:21px; font-weight:600}
+  .macro .l{font-size:10px; color:var(--muted-solid); text-transform:uppercase; letter-spacing:.06em; margin-top:2px}
+  .macro .bar{height:5px; border-radius:4px; background:var(--panel-2); margin-top:9px; overflow:hidden}
+  .macro .bar i{display:block; height:100%; border-radius:4px}
+  .meal{border:1px solid var(--line); border-radius:13px; overflow:hidden; background:var(--panel)}
+  .meal .mt{display:flex; justify-content:space-between; align-items:center; padding:11px 13px; border-bottom:1px solid var(--line); background:var(--panel-2)}
+  .meal .mt .mtime{font-size:10px; color:var(--muted-solid); text-transform:uppercase; letter-spacing:.06em}
+  .meal .mt b{font-size:13.5px}
+  .meal .kcal{font-family:var(--mono); font-size:11.5px; color:var(--muted-solid)}
+  .meal .body{padding:2px 13px 12px}
+  .meal ul{margin:8px 0 0; padding-left:16px; color:var(--muted-solid); font-size:12.5px}
+  .meal ul li{margin:3px 0}
+  .budgetbar{height:12px; border-radius:8px; background:var(--panel-2); border:1px solid var(--line); position:relative; overflow:hidden}
+  .budgetbar i{position:absolute; left:0; top:0; bottom:0; border-radius:8px}
+  .gitem{display:flex; align-items:center; gap:9px; padding:9px 0; border-top:1px solid var(--line); font-size:13px}
+  .gitem .gn{flex:1}
+  .gitem .price{font-family:var(--mono); font-weight:600}
+  .gitem .was{font-family:var(--mono); font-size:11px; color:var(--muted-solid); text-decoration:line-through}
+  .sale{font-size:9px; font-weight:800; color:var(--good); background:var(--good-weak); padding:2px 6px; border-radius:6px; letter-spacing:.04em}
+  .store{font-size:10.5px; color:var(--muted-solid)}
+  .suggest{display:flex; gap:14px; padding:15px; border:1px solid var(--line); border-radius:13px; background:var(--panel); align-items:flex-start}
+  .suggest .imp{width:46px; flex:none; text-align:center}
+  .suggest .imp .n{font-family:var(--mono); font-size:22px; font-weight:700; line-height:1}
+  .suggest .imp .l{font-size:8.5px; color:var(--muted-solid); text-transform:uppercase; letter-spacing:.05em; margin-top:3px}
+  .goal{border:1px solid var(--line); border-radius:13px; padding:15px; background:var(--panel)}
+  .goal .gh{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+  .goal .now{font-family:var(--mono); font-size:25px; font-weight:600; margin-top:3px}
+  .goal .tgt2{font-size:12px; color:var(--muted-solid); font-weight:600}
+  .goal .prog{height:7px; border-radius:5px; background:var(--panel-2); border:1px solid var(--line); margin-top:13px; overflow:hidden}
+  .goal .prog i{display:block; height:100%; border-radius:5px}
+
+  .wizard{max-width:660px; margin:10px auto}
+  .steps{display:flex; gap:7px; justify-content:center; margin-bottom:22px}
+  .stepdot{width:38px; height:4px; border-radius:3px; background:var(--line); transition:background .2s}
+  .stepdot.on{background:var(--accent)}
+  .wstep{display:none} .wstep.on{display:block; animation:fade .25s ease}
+  .field{margin-top:15px}
+  .field label{display:block; font-size:12px; font-weight:600; margin-bottom:6px}
+  .field input,.field select,.field textarea{width:100%; font-family:inherit; font-size:13.5px; color:var(--text); background:var(--panel-2); border:1px solid var(--line); border-radius:10px; padding:11px 12px}
+  .row2{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+  .choicerow{display:flex; flex-wrap:wrap; gap:8px; margin-top:8px}
+  .choice{padding:9px 13px; border:1px solid var(--line); border-radius:10px; background:var(--panel-2); font-size:13px; cursor:pointer; font-weight:550}
+  .choice.sel{border-color:var(--accent); background:var(--accent-weak); color:var(--accent)}
+  .wizbtns{display:flex; justify-content:space-between; margin-top:24px; gap:10px}
+  .btn{padding:10px 18px; border-radius:10px; border:1px solid var(--line); background:var(--panel); font-weight:600; font-size:13px}
+  .btn.primary{background:var(--accent); color:#fff; border-color:transparent}
+  .btn:disabled{opacity:.4}
+  .addbtn:hover,.btn.primary:hover,.cbtn:hover,.logbtn:hover{filter:brightness(1.08)}
+  .addbtn:active,.btn:active,.iconbtn:active,.navitem:active{transform:translateY(1px)}
+  .btn:hover{border-color:var(--accent)}
+  .iconbtn:hover,.chip:hover{border-color:var(--accent); color:var(--accent)}
+  .seg:hover{color:var(--text)}
+  .biomarker:hover,.genecard:hover,.pepcard:hover,.suggest:hover,.goal:hover{border-color:color-mix(in srgb,var(--accent) 40%, var(--line))}
+  .navitem,.addbtn,.btn,.iconbtn,.chip,.seg,.choice{transition:background .15s, border-color .15s, color .15s, filter .15s, transform .05s}
+  .connectcard{display:flex; align-items:center; gap:12px; padding:13px; border:1px solid var(--line); border-radius:12px; background:var(--panel-2); margin-top:10px}
+  .connectcard .ic{width:38px; height:38px; border-radius:10px; background:var(--accent-weak); display:grid; place-items:center; color:var(--accent); flex:none; font-weight:700; font-size:16px}
+  .connectcard .cbtn{margin-left:auto; font-size:12px; font-weight:600; color:var(--accent); background:var(--accent-weak); border:0; padding:8px 13px; border-radius:9px; cursor:pointer}
+
+  .addbtn{background:var(--accent); color:#fff; border:0; border-radius:9px; padding:8px 13px; font-weight:600; font-size:12.5px; display:inline-flex; align-items:center; gap:5px; cursor:pointer}
+  .overlay{position:fixed; inset:0; background:#0009; backdrop-filter:blur(3px); display:none; z-index:60; padding:20px}
+  .overlay.open{display:grid; place-items:center}
+  .modal{width:100%; max-width:470px; background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:var(--shadow); max-height:88vh; overflow-y:auto}
+  .modal h3{font-size:16px}
+  .segrow{display:flex; gap:5px; background:var(--panel-2); border:1px solid var(--line); border-radius:11px; padding:4px; margin:15px 0 4px; flex-wrap:wrap}
+  .seg{flex:1; min-width:64px; text-align:center; padding:8px 6px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; color:var(--muted-solid)}
+  .seg.on{background:var(--accent); color:#fff}
+  .toast{position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:var(--good); color:#fff; padding:11px 18px; border-radius:11px; font-weight:600; font-size:13px; z-index:80; opacity:0; transition:opacity .3s,transform .3s; pointer-events:none}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px)}
+  @media (max-width:1000px){ .macros{grid-template-columns:repeat(3,1fr)} }
+  @media (max-width:640px){ .macros{grid-template-columns:repeat(2,1fr)} .row2{grid-template-columns:1fr} .corr{flex-wrap:wrap} .corr .lab{width:100%} }
+  .promo{position:fixed; bottom:18px; right:18px; z-index:70; background:var(--accent); color:#fff; font-weight:700; font-size:13px; padding:12px 18px; border-radius:999px; box-shadow:0 8px 30px #0006; text-decoration:none; display:inline-flex; align-items:center; gap:7px; transition:filter .15s}
+  .promo:hover{filter:brightness(1.08)}
+  @media (max-width:640px){ .promo{bottom:12px; right:12px; left:12px; justify-content:center} }
+</style>
+
+<a class="promo" href="https://YOUR-LINK-HERE" target="_blank" rel="noopener">⚡ Get your own Longevity OS →</a>
+<div class="app">
+  <aside class="rail">
+    <div class="brand">
+      <div class="mark"></div>
+      <div><b>Longevity OS</b><span>personal edition</span></div>
+    </div>
+    <nav id="nav">
+      <button class="navitem active" data-view="home"><svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Command Center</button>
+      <div class="navgroup">Data</div>
+      <button class="navitem" data-view="vitals"><svg viewBox="0 0 24 24"><path d="M3 12h4l2 5 4-12 2 7h6"/></svg>Vitals · WHOOP</button>
+      <button class="navitem" data-view="labs"><svg viewBox="0 0 24 24"><path d="M9 3v6l-5 9a2 2 0 002 3h12a2 2 0 002-3l-5-9V3"/><path d="M8 3h8"/></svg>Labs</button>
+      <button class="navitem" data-view="genetics"><svg viewBox="0 0 24 24"><path d="M8 3c8 4-8 14 0 18M16 3c-8 4 8 14 0 18"/></svg>Genetics</button>
+      <button class="navitem" data-view="gut"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 10c1 2 3 2 4 0s3-2 4 0"/></svg>Gut · Viome</button>
+      <div class="navgroup">Plan</div>
+      <button class="navitem" data-view="protocol"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Protocol</button>
+      <button class="navitem" data-view="nutrition"><svg viewBox="0 0 24 24"><path d="M11 20A7 7 0 019 6c3-2 8-2 11-3-1 3-1 8-3 11a7 7 0 01-6 6z"/><path d="M9 15c2-3 4-4 7-5"/></svg>Nutrition</button>
+      <button class="navitem" data-view="fitness"><svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M4 9v6M20 9v6M6.5 12h11"/></svg>Fitness</button>
+      <button class="navitem" data-view="supplements"><svg viewBox="0 0 24 24"><path d="M10.5 20.5l10-10a5 5 0 00-7-7l-10 10a5 5 0 007 7z"/><path d="M8.5 8.5l7 7"/></svg>Supplements</button>
+      <button class="navitem" data-view="peptides"><svg viewBox="0 0 24 24"><path d="M19 2l3 3M18 3.5l2.5 2.5M15.5 5.5l3 3-9.5 9.5H6v-3z"/><path d="M8.5 11.5l3 3"/></svg>Peptides</button>
+      <button class="navitem" data-view="goals"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg>Goals</button>
+      <div class="navgroup">Intelligence</div>
+      <button class="navitem" data-view="suggestions"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 00-4-10z"/></svg>Suggestions</button>
+      <button class="navitem" data-view="trends"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 4-6"/></svg>Trends · N-of-1</button>
+      <button class="navitem" data-view="coach"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H8l-4 4V5a2 2 0 012-2h13a2 2 0 012 2z"/></svg>AI Doctor</button>
+    </nav>
+    <div class="foot">Self-hosted · your data stays on your deploy. Not medical advice.</div>
+  </aside>
+
+  <main>
+    <div class="topbar">
+      <button class="iconbtn menubtn" id="menu" aria-label="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="title">
+        <h1 id="vtitle">Command Center</h1>
+        <p id="vsub">Wednesday · everything, cross-referenced</p>
+      </div>
+      <div class="spacer"></div>
+      <span class="chip"><span class="dot"></span>WHOOP synced 2m ago</span>
+      <span class="chip" style="color:var(--warn)">SAMPLE DATA</span>
+      <button class="chip" id="setup" style="cursor:pointer">⚙ Setup</button>
+      <button class="addbtn" id="addbtn">＋ Log / Add</button>
+      <select id="range" aria-label="Time range">
+        <option value="7">7 days</option>
+        <option value="30" selected>30 days</option>
+        <option value="90">90 days</option>
+        <option value="365">1 year</option>
+      </select>
+      <button class="iconbtn" id="theme" aria-label="Toggle theme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></button>
+    </div>
+
+    <!-- ================= COMMAND CENTER ================= -->
+    <section class="view active" id="home">
+      <div class="grid hero">
+        <div class="card">
+          <div class="cardhead"><div><h3>Biological Age</h3><div class="sub">PhenoAge · Levine (labs-derived)</div></div><span class="delta up">▼ 8.4 yrs younger</span></div>
+          <div class="ringwrap">
+            <canvas data-gauge="bioage" width="208" height="208" aria-label="Biological age gauge"></canvas>
+            <div>
+              <div class="bigstat">29.6</div>
+              <div class="sub">vs chronological <b class="num">38</b> · retest due Oct 2026</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cardhead"><div><h3>Longevity Score</h3><div class="sub">8 weighted domains</div></div><span class="delta up">▲ 4 · 30d</span></div>
+          <div class="bigstat" style="color:var(--warn)">52<span style="font-size:20px;color:var(--muted-solid)">/100</span></div>
+          <div class="rb"><div class="rbtrack"><span class="rbdot" style="left:52%;color:var(--warn);background:var(--warn)"></span></div><div class="rbscale"><span>ceiling 82</span><span>target 65 by wk12</span></div></div>
+          <div class="sub" style="margin-top:12px">Weakest: <b>Inflammation history</b>, <b>HRV/autonomic</b>. Strongest: Brain, Metabolic.</div>
+        </div>
+        <div class="card">
+          <div class="cardhead"><div><h3>Today's Readiness</h3><div class="sub">recovery · HRV · sleep</div></div><span class="delta" style="color:var(--warn); background:var(--warn-weak)">amber</span></div>
+          <div class="ringwrap">
+            <canvas data-ring="61" data-ringcolor="warn" width="208" height="208" aria-label="Readiness 61%"></canvas>
+            <div style="font-size:12.5px; color:var(--muted-solid); line-height:1.8">
+              <div>HRV <b class="num" style="color:var(--text)">41</b> ms</div>
+              <div>RHR <b class="num" style="color:var(--text)">62</b> bpm</div>
+              <div>Sleep <b class="num" style="color:var(--text)">7.1</b> h · 71%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid kpis" style="margin-top:16px">
+        <div class="card kpi">
+          <div class="top"><span class="eyebrow">HRV · rMSSD</span><span class="delta down" id="dd-hrv">▼ 6%</span></div>
+          <div class="val" id="v-hrv">33.6<span class="unit"> ms</span></div>
+          <canvas data-spark="hrv" data-col="bad" width="240" height="34"></canvas>
+          <div class="tgt">target 50+ · behavioral ceiling proven at 67</div>
+        </div>
+        <div class="card kpi">
+          <div class="top"><span class="eyebrow">Resting HR</span><span class="delta down" id="dd-rhr">▲ 2 bpm</span></div>
+          <div class="val" id="v-rhr">68<span class="unit"> bpm</span></div>
+          <canvas data-spark="rhr" data-col="warn" width="240" height="34"></canvas>
+          <div class="tgt">target 56 · Zone-2 volume lever</div>
+        </div>
+        <div class="card kpi">
+          <div class="top"><span class="eyebrow">Recovery</span><span class="delta up" id="dd-rec">▲ 5%</span></div>
+          <div class="val" id="v-rec">58<span class="unit"> %</span></div>
+          <canvas data-spark="rec" data-col="warn" width="240" height="34"></canvas>
+          <div class="tgt">target 65% · 28% green days</div>
+        </div>
+        <div class="card kpi">
+          <div class="top"><span class="eyebrow">Sleep</span><span class="delta up" id="dd-sleep">▲ 0.4 h</span></div>
+          <div class="val" id="v-sleep">7.34<span class="unit"> h</span></div>
+          <canvas data-spark="sleep" data-col="good" width="240" height="34"></canvas>
+          <div class="tgt">REM 13% low · THC + late meals</div>
+        </div>
+      </div>
+
+      <div class="sec-title"><h2>What changed since your last panel</h2><div class="ln"></div><span class="sub">Rythm · Jun 5 vs May 13</span></div>
+      <div class="card"><div class="diffstrip">
+        <div class="diffcard"><div class="eyebrow">Triglycerides</div><div class="d" style="color:var(--good)">66 ▼</div><div class="sub">was 42% high → optimal</div></div>
+        <div class="diffcard"><div class="eyebrow">Uric acid</div><div class="d" style="color:var(--good)">5.29 ▼</div><div class="sub">was 8.39 high → resolved</div></div>
+        <div class="diffcard"><div class="eyebrow">Free T</div><div class="d" style="color:var(--good)">+81%</div><div class="sub">washout working</div></div>
+        <div class="diffcard"><div class="eyebrow">ApoB</div><div class="d" style="color:var(--bad)">101 ▲</div><div class="sub">+7% · CV lever now</div></div>
+        <div class="diffcard"><div class="eyebrow">Ferritin</div><div class="d" style="color:var(--warn)">210 ▲</div><div class="sub">+11% creep · HFE</div></div>
+      </div></div>
+
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card">
+          <div class="cardhead"><div><h3>Top flags — cross-referenced</h3><div class="sub">re-graded to male TRT-context ranges</div></div></div>
+          <div id="homeflags"></div>
+        </div>
+        <div class="grid" style="gap:16px; align-content:start">
+          <div class="card action">
+            <div class="n">1</div>
+            <div>
+              <div class="eyebrow" style="color:var(--accent)">Today's one thing</div>
+              <div style="font-weight:600; margin:3px 0 4px">Lower ApoB — it's your #1 lever now.</div>
+              <div class="sub" style="color:var(--text)">ApoB 101 + LDL/ApoB 1.13 (small dense particles). Citrus Bergamot + CholestePure already staged; add Zone-2 volume. Not a statin — your call, but ApoB drives the risk more than LDL-C.</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="cardhead"><div><h3>Confounder watch</h3></div><span class="statuspill s-warn">honesty</span></div>
+            <div class="sub" style="color:var(--text)">This week's HRV dip lines up with your <b>blood donation 12 days ago</b> (transient anemia), <b>not</b> your peptides. Expect rebound by next week — hold the stack, don't overcorrect.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VITALS ================= -->
+    <section class="view" id="vitals">
+      <div class="grid cols-3">
+        <div class="card"><div class="eyebrow">HRV 30-day avg</div><div class="bigstat" style="font-size:34px; margin-top:8px">33.6<span style="font-size:16px;color:var(--muted-solid)"> ms</span></div><div class="sub">range 17–67 · variance is behavioral</div></div>
+        <div class="card"><div class="eyebrow">Sleep need met</div><div class="bigstat" style="font-size:34px; margin-top:8px">86<span style="font-size:16px;color:var(--muted-solid)"> %</span></div><div class="sub">consistency 53% · the real gap</div></div>
+        <div class="card"><div class="eyebrow">Respiratory rate</div><div class="bigstat" style="font-size:34px; margin-top:8px">12.4<span style="font-size:16px;color:var(--muted-solid)"> rpm</span></div><div class="sub">stable · SERPINA1 lung watch</div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="cardhead">
+          <div><h3>HRV trend with interventions</h3><div class="sub">annotate what you changed → see the effect</div></div>
+          <select id="vrange" aria-label="Vitals range"><option>30 days</option><option>90 days</option><option>1 year</option></select>
+        </div>
+        <canvas data-trend="hrv" width="1000" height="300" style="width:100%; height:300px"></canvas>
+      </div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card">
+          <div class="cardhead"><div><h3>Sleep architecture</h3><div class="sub">drill: score → contributors → raw</div></div></div>
+          <table><tbody>
+            <tr><td>Deep (SWS)</td><td class="num">77 min</td><td><div class="rb" style="margin:0"><div class="rbtrack" style="background:var(--panel-2)"><span class="rbfill" style="width:52%; background:var(--accent)"></span></div></div></td><td class="num" style="color:var(--warn)">18%</td></tr>
+            <tr><td>REM</td><td class="num">60 min</td><td><div class="rb" style="margin:0"><div class="rbtrack" style="background:var(--panel-2)"><span class="rbfill" style="width:39%; background:var(--bad)"></span></div></div></td><td class="num" style="color:var(--bad)">13%</td></tr>
+            <tr><td>Light</td><td class="num">225 min</td><td><div class="rb" style="margin:0"><div class="rbtrack" style="background:var(--panel-2)"><span class="rbfill" style="width:74%; background:var(--muted-solid)"></span></div></div></td><td class="num">48%</td></tr>
+            <tr><td>Disturbances</td><td class="num">9.4</td><td colspan="2" class="sub">per night · mid-night eating driver</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <div class="cardhead"><div><h3>Recovery mix · 30 days</h3></div></div>
+          <div class="ringwrap" style="justify-content:center; padding:8px 0">
+            <canvas data-ring="58" data-ringcolor="warn" data-multi="1" width="220" height="220" aria-label="recovery mix"></canvas>
+          </div>
+          <div style="display:flex; gap:16px; justify-content:center; font-size:12px; margin-top:6px">
+            <span><b style="color:var(--good)">●</b> 43% green</span>
+            <span><b style="color:var(--warn)">●</b> 37% yellow</span>
+            <span><b style="color:var(--bad)">●</b> 20% red</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LABS ================= -->
+    <section class="view" id="labs">
+      <div class="topbar" style="position:static; padding:0 0 16px; border:0; background:none; backdrop-filter:none">
+        <div class="sub">42 markers · grouped by system · vendor flags re-graded to male TRT-context ranges</div>
+        <div class="spacer"></div>
+        <select id="labsys" aria-label="Filter by system">
+          <option value="all">All systems</option>
+          <option value="heart">Heart</option>
+          <option value="hormones">Hormones</option>
+          <option value="metabolic">Metabolic</option>
+          <option value="iron">Iron / blood</option>
+          <option value="liver">Liver</option>
+        </select>
+      </div>
+      <div class="grid cols-3" id="labgrid"></div>
+    </section>
+
+    <!-- ================= GENETICS ================= -->
+    <section class="view" id="genetics">
+      <div class="sub" style="margin-bottom:14px">34 whole-genome reports · each variant wired to an <b>ongoing monitoring rule</b>, not a dead-end PDF.</div>
+      <div class="grid cols-3" id="genegrid"></div>
+      <div class="sec-title"><h2>Protective</h2><div class="ln"></div></div>
+      <div class="grid cols-3">
+        <div class="card" style="border-color:var(--good-weak)"><b>No APOE4</b><div class="sub">no elevated Alzheimer's risk</div></div>
+        <div class="card" style="border-color:var(--good-weak)"><b>Lp(a) 13 nmol/L</b><div class="sub">excellent genetic CV baseline</div></div>
+        <div class="card" style="border-color:var(--good-weak)"><b>No LRRK2 / SNCA</b><div class="sub">no elevated Parkinson's risk</div></div>
+      </div>
+    </section>
+
+    <!-- ================= GUT ================= -->
+    <section class="view" id="gut">
+      <div class="grid cols-3">
+        <div class="card"><div class="eyebrow">Gut microbiome</div><div class="bigstat" style="font-size:30px;margin-top:8px;color:var(--bad)">Attention</div><div class="rb"><div class="rbtrack"><span class="rbdot" style="left:24%;color:var(--bad);background:var(--bad)"></span></div></div><div class="sub" style="margin-top:8px">low butyrate · high ammonia · lining compromised</div></div>
+        <div class="card"><div class="eyebrow">Inflammatory activity</div><div class="bigstat" style="font-size:30px;margin-top:8px;color:var(--warn)">High</div><div class="rb"><div class="rbtrack"><span class="rbdot" style="left:34%;color:var(--warn);background:var(--warn)"></span></div></div><div class="sub" style="margin-top:8px">reconciles with SMAD3/IL36RN genes</div></div>
+        <div class="card"><div class="eyebrow">Cellular / metabolic</div><div class="bigstat" style="font-size:30px;margin-top:8px;color:var(--warn)">Improve</div><div class="rb"><div class="rbtrack"><span class="rbdot" style="left:48%;color:var(--warn);background:var(--warn)"></span></div></div><div class="sub" style="margin-top:8px">11 Attention · 7 Improve · 2 Maintain</div></div>
+      </div>
+      <div class="card" style="margin-top:16px; border-color:color-mix(in srgb,var(--accent) 30%,transparent); background:var(--accent-weak)">
+        <div class="cardhead"><div><h3>⚑ Conflict reconciliation</h3><div class="sub" style="color:var(--text)">Viome says <b>AVOID turmeric</b> — but your stack used curcumin for SMAD3 inflammation. Resolved: dropped curcumin, swapped to <b>Quercetin 500mg</b> (anti-inflammatory + iron chelation for HFE). One coherent plan, not three contradictory ones.</div></div></div>
+      </div>
+      <div class="sec-title"><h2>Personalized food engine</h2><div class="ln"></div><span class="sub">computed from your microbiome</span></div>
+      <div class="grid cols-3">
+        <div class="card"><div class="cardhead"><h3 style="color:var(--good)">Superfoods</h3></div><div id="food-super" class="grid" style="gap:7px"></div></div>
+        <div class="card"><div class="cardhead"><h3 style="color:var(--warn)">Minimize</h3></div><div id="food-min" class="grid" style="gap:7px"></div></div>
+        <div class="card"><div class="cardhead"><h3 style="color:var(--bad)">Avoid · 6 mo</h3></div><div id="food-avoid" class="grid" style="gap:7px"></div></div>
+      </div>
+    </section>
+
+    <!-- ================= PROTOCOL ================= -->
+    <section class="view" id="protocol">
+      <div class="grid cols-3">
+        <div class="card"><div class="eyebrow">Daily items</div><div class="bigstat" style="font-size:34px;margin-top:8px">39</div><div class="sub">supps + powders + peptides</div></div>
+        <div class="card"><div class="eyebrow">Adherence · 30d</div><div class="ringwrap"><canvas data-ring="88" data-ringcolor="good" width="150" height="150"></canvas><div class="sub">missed NAC 4 days → ALT context flagged to coach</div></div></div>
+        <div class="card"><div class="eyebrow">Active peptides</div><div style="margin-top:8px; font-weight:600">SS-31 · GHK-Cu</div><div class="sub" style="margin-top:6px">MOTS-c, Retatrutide, CJC/Ipa staged · peptide-isolation A/B logged</div></div>
+      </div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card">
+          <div class="cardhead"><div><h3>Daily schedule</h3><div class="sub">interaction-aware</div></div></div>
+          <div class="timeline">
+            <div class="tl"><div class="t">6:30 AM · fasted</div><div class="items">B-12 sublingual first · Methylene Blue · L-Tyrosine · NAC · DHEA · Boron · NMN · creatine · MOTS-c</div></div>
+            <div class="tl"><div class="t">10:00 AM · breakfast</div><div class="items">Metformin · Omega-3 · D3/K2 · Astaxanthin · Zinc · CoQ10 · Retatrutide (wk)</div></div>
+            <div class="tl"><div class="t">3:00 PM · alone</div><div class="items">IP6 — chelates all minerals, must be solo (HFE iron)</div></div>
+            <div class="tl"><div class="t">5:30 PM · dinner</div><div class="items">CholestePure (sep. from Bergamot — CYP3A4) · Copper</div></div>
+            <div class="tl"><div class="t">9:00 PM · sleep</div><div class="items">Mag glycinate · Glycine · Taurine · DSIP · CJC/Ipa (3h fasted)</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="cardhead"><div><h3>Interaction & synergy checks</h3></div></div>
+          <div class="tagrow" style="gap:8px">
+            <span class="statuspill s-warn">NAC ↔ Zinc · 3.5h apart ✓</span>
+            <span class="statuspill s-warn">Vit C fasted · HFE iron ✓</span>
+            <span class="statuspill s-warn">IP6 alone · chelates minerals ✓</span>
+            <span class="statuspill s-warn">Bergamot ↔ CholestePure · CYP3A4 ✓</span>
+          </div>
+          <div style="height:14px"></div>
+          <div class="cardhead"><div><h3 style="font-size:12px">Synergy stacks</h3></div></div>
+          <div class="tagrow">
+            <span class="tag">NMN + Spermidine + MOTS-c + Urolithin A → longevity quad</span>
+            <span class="tag">CoQ10 + Methylene Blue + NMN → mito Complex I–IV (SCO2/TSFM)</span>
+            <span class="tag">Quercetin + IP6 + donation → iron mgmt (HFE)</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= COACH ================= -->
+    <section class="view" id="coach">
+      <div class="disclaimer" style="margin-bottom:16px"><b>Educational, not medical advice.</b> Longevity OS is a wellness tool and does not diagnose, treat, or prescribe. No doctor–patient relationship is created. Peptide/dose content is your own protocol on your own instance. Consult a licensed physician; call your doctor or 911 for emergencies. Supplement statements are not FDA-evaluated.</div>
+      <div class="chat" id="chat">
+        <div class="bubble me">Why is my HRV still stuck in the 30s if my labs are improving?</div>
+        <div class="bubble ai">
+          <div class="toolrow">
+            <span class="toolchip">getWhoopTrend(hrv, 90d)</span>
+            <span class="toolchip">getBiomarker(ferritin)</span>
+            <span class="toolchip">getJournal(alcohol, THC, meals)</span>
+            <span class="toolchip">searchKnowledge(HRV autonomic)</span>
+          </div>
+          <p style="margin:0 0 10px">Your labs and HRV are telling <b>different-timescale</b> stories, and that's expected. Three things, in order of impact:</p>
+          <p style="margin:0 0 8px"><b>1. It's behavioral, not your stack.</b> Your own zero-stack test swung HRV from 11.7 → 67.3 in one week — the ceiling is high; the average is dragged by inputs. <span class="evi">Evidence A · your data</span></p>
+          <p style="margin:0 0 8px"><b>2. Two live confounders.</b> Blood donation 12 days ago (transient anemia depresses HRV ~2 weeks) and <b>ferritin 210</b> creeping — the HFE iron picture. Neither is peptide-related. <span class="evi">B</span></p>
+          <p style="margin:0 0 8px"><b>3. The two real levers</b> are late-night THC and mid-night eating (both suppress REM → next-day HRV). Fixing sleep consistency (53%) beats any supplement here.</p>
+          <p style="margin:0"><b>Don't</b> add anything or change peptides this week — hold and let the donation rebound clear first.</p>
+        </div>
+      </div>
+      <div style="display:flex; gap:9px; margin-top:16px; max-width:820px; flex-wrap:wrap">
+        <input id="coachin" placeholder="Ask about your data — e.g. should I add creatine?" style="flex:1; min-width:200px; font-family:inherit; font-size:13.5px; color:var(--text); background:var(--panel); border:1px solid var(--line); border-radius:11px; padding:12px 14px">
+        <button class="btn primary" id="coachsend">Send</button>
+        <a class="btn" href="https://claude.ai" target="_blank" rel="noopener" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none">Open in Claude ↗</a>
+      </div>
+      <div class="sub" style="max-width:820px; margin-top:9px">In the real app this streams from the <b>Claude API</b>, grounded in your data + 326 KB knowledge base. Demo replies below are canned.</div>
+      <div style="display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; max-width:820px" id="coachsuggest">
+        <button class="tag" style="cursor:pointer">Why is my HRV low?</button>
+        <button class="tag" style="cursor:pointer">Lower my ApoB</button>
+        <button class="tag" style="cursor:pointer">Is my bio-age real?</button>
+        <button class="tag" style="cursor:pointer">Should I add creatine?</button>
+        <button class="tag" style="cursor:pointer">Ferritin creeping?</button>
+      </div>
+    </section>
+
+    <!-- ================= TRENDS ================= -->
+    <section class="view" id="trends">
+      <div class="sub" style="margin-bottom:14px">Intervention → outcome, N-of-1. Effect sizes from your logged behaviors vs WHOOP outcomes. This is what no incumbent does.</div>
+      <div class="card">
+        <div class="cardhead"><div><h3>Biological age · PhenoAge breakdown</h3><div class="sub">Levine 2018 · 9 blood markers → mortality-calibrated age</div></div><span class="delta up">29.6 vs 38 · ▼ 8.4 yr</span></div>
+        <div id="phenoage"></div>
+        <div class="sub" style="margin-top:10px"><span style="color:var(--good); font-weight:600">green</span> pulls your age down · <span style="color:var(--bad); font-weight:600">red</span> pushes it up · retest Oct 2026</div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="cardhead"><div><h3>What moves your recovery & sleep</h3><div class="sub">bar = effect on the outcome · needs ≥6 paired days</div></div>
+          <select id="corrsel" aria-label="outcome"><option value="recovery">vs Recovery</option><option value="rem">vs REM sleep</option><option value="hrv">vs HRV</option></select>
+        </div>
+        <div id="corrlist"></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="cardhead"><div><h3>Active experiment</h3></div><span class="statuspill s-good">running · day 12/31</span></div>
+        <div class="sub" style="color:var(--text)">May HRV reset — 8-phase elimination/reintroduction. Behavioral lock + decision rules. Verdict auto-computed when phases complete. This is your peptide-isolation A/B, productized: annotate the change, the engine reads the effect.</div>
+      </div>
+    </section>
+
+    <!-- ================= NUTRITION ================= -->
+    <section class="view" id="nutrition">
+      <div class="disclaimer" style="margin-bottom:16px"><b>Nutritionist mode.</b> Meals are built from your Viome <b>Superfoods</b>, exclude your <b>Avoid</b> list, hit your macro targets, and stay inside your 16:8 window — with a gut-repair emphasis. Educational, not a substitute for a registered dietitian.</div>
+      <div class="grid cols-2" style="margin-bottom:16px">
+        <div class="card">
+          <div class="cardhead"><div><h3>Macro tracker · today</h3><div class="sub">consumed vs target · snap a photo to log</div></div>
+            <button class="addbtn" id="snapmeal">📷 Snap a meal</button></div>
+          <div id="trackbars"></div>
+        </div>
+        <div class="card">
+          <div class="cardhead"><div><h3>Food log</h3><div class="sub">photo → auto-estimated macros</div></div></div>
+          <div class="foodlog" id="foodlog"></div>
+        </div>
+      </div>
+      <div class="sec-title"><h2>Planned macros &amp; meals</h2><div class="ln"></div></div>
+      <div class="grid macros" id="macrorow"></div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card">
+          <div class="cardhead"><div><h3>Today's meal plan</h3><div class="sub">gut-repair emphasis · Viome-constrained</div></div>
+            <select aria-label="plan day"><option>Today</option><option>Tomorrow</option><option>Full week</option></select></div>
+          <div class="grid" id="mealgrid" style="gap:12px"></div>
+        </div>
+        <div class="grid" style="gap:16px; align-content:start">
+          <div class="card">
+            <div class="cardhead"><div><h3>Grocery run — sourced on sale</h3><div class="sub">cheapest in-stock across Kroger + Whole Foods</div></div><span class="statuspill s-good" id="savepill"></span></div>
+            <div style="margin-bottom:8px">
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; margin-bottom:8px"><span class="sub">Weekly budget · drag to adjust</span><span class="num" id="budgettxt"></span></div>
+              <input type="range" id="budgetslider" min="80" max="220" step="5" value="140" aria-label="Weekly grocery budget">
+              <div class="budgetbar" style="margin-top:9px"><i id="budgetfill"></i></div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-top:9px; gap:8px"><span id="budgetmsg" class="sub" aria-live="polite"></span><button class="chip" id="budgetfit" style="cursor:pointer">Find cheaper swaps</button></div>
+            </div>
+            <div id="groclist"></div>
+            <button class="addbtn" style="margin-top:14px; width:100%; justify-content:center">Send to Instacart / Kroger cart</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FITNESS ================= -->
+    <section class="view" id="fitness">
+      <div class="grid kpis">
+        <div class="card"><div class="eyebrow">Weekly strain</div><div class="bigstat" style="font-size:30px; margin-top:6px; color:var(--warn)">14.2</div><div class="sub">target 10–14 · over</div></div>
+        <div class="card"><div class="eyebrow">Workouts · 14d</div><div class="bigstat" style="font-size:30px; margin-top:6px; color:var(--warn)">25</div><div class="sub">ramped from 13</div></div>
+        <div class="card"><div class="eyebrow">Est. VO₂max</div><div class="bigstat" style="font-size:30px; margin-top:6px">44</div><div class="sub">mL/kg/min · good</div></div>
+        <div class="card"><div class="eyebrow">Zone-2 / week</div><div class="bigstat" style="font-size:30px; margin-top:6px; color:var(--good)">165</div><div class="sub">min · target 150 ✓</div></div>
+      </div>
+      <div class="card" style="margin-top:16px; border-color:color-mix(in srgb,var(--good) 30%, transparent); background:var(--good-weak)">
+        <div class="cardhead"><div><h3>✓ Strong Zone-2 base</h3><div class="sub" style="color:var(--text)">2.5 h of true Zone-2 yesterday — exactly the aerobic base your HRV and RHR need. Keep max HR capped ~140 (a couple earlier sessions still drifted into Z4). As this Z2 volume compounds, expect RHR to fall from 68.</div></div></div>
+      </div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card"><div class="cardhead"><div><h3>HR-zone distribution · this week</h3><div class="sub">too much Z4/Z5 · not enough Z2</div></div></div><div id="fitzones"></div></div>
+        <div class="card"><div class="cardhead"><div><h3>Weekly training plan</h3><div class="sub">Zone-2 base + 2 strength</div></div><button class="addbtn" id="logworkout">＋ Log workout</button></div><div class="scrollx"><div class="schedgrid" id="fitplan"></div></div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="cardhead"><div><h3>Recent workouts</h3><div class="sub">flagged = drifted into Z4 when it should be easy</div></div></div>
+        <div class="scrollx"><table id="fittable"><thead><tr><th>Date</th><th>Type</th><th>Duration</th><th>Strain</th><th>Avg HR</th><th>Max HR</th><th>Read</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ================= SUPPLEMENTS ================= -->
+    <section class="view" id="supplements">
+      <div class="grid cols-3">
+        <div class="card"><div class="eyebrow">Stack size</div><div class="bigstat" style="font-size:34px; margin-top:8px">39</div><div class="sub">tracked items · 5 time windows</div></div>
+        <div class="card"><div class="eyebrow">Monthly spend</div><div class="bigstat" style="font-size:34px; margin-top:8px">$199</div><div class="sub">supplements + peptides</div></div>
+        <div class="card" style="border-color:var(--warn-weak)"><div class="eyebrow">Needs reorder</div><div class="bigstat" style="font-size:34px; margin-top:8px; color:var(--warn)">4</div><div class="sub">2 out in ≤3 days</div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="cardhead"><div><h3>Supplement inventory</h3><div class="sub">days-left computed from dose × count · photograph a label to add</div></div>
+          <button class="addbtn" id="suppadd">＋ Add via photo</button></div>
+        <div class="scrollx"><table id="supptable"><thead><tr><th>Supplement</th><th>Dose / timing</th><th>Days left</th><th>Monthly</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+      </div>
+    </section>
+
+    <!-- ================= PEPTIDES ================= -->
+    <section class="view" id="peptides">
+      <div class="pepbar"><span>⚠</span><span><b>Research use only.</b> Not FDA-approved; educational, not medical advice. In the shared build, peptide dosing is gated behind explicit opt-in — full detail shows only on your private instance.</span></div>
+      <div class="grid kpis">
+        <div class="card"><div class="eyebrow">Active compounds</div><div class="bigstat" style="font-size:30px; margin-top:6px">2</div><div class="sub">SS-31 · GHK-Cu</div></div>
+        <div class="card"><div class="eyebrow">Injections this week</div><div class="bigstat" style="font-size:30px; margin-top:6px">12</div><div class="sub">7 SS-31 · 5 GHK-Cu</div></div>
+        <div class="card"><div class="eyebrow">Vial expiring</div><div class="bigstat" style="font-size:30px; margin-top:6px">Jul 27</div><div class="sub">30-day BAC clock</div></div>
+        <div class="card" style="border-color:var(--warn-weak)"><div class="eyebrow">Low stock</div><div class="bigstat" style="font-size:30px; margin-top:6px; color:var(--warn)">1</div><div class="sub">GHK-Cu · 5 doses left</div></div>
+      </div>
+      <div class="cardhead" style="margin:22px 2px 12px"><div><h2 style="font-size:15px">Active peptides</h2></div><div style="display:flex; gap:8px"><button class="addbtn" id="pepadd">＋ Add Peptide</button><button class="addbtn" id="pepphoto" style="background:var(--panel); color:var(--accent); border:1px solid var(--line)">＋ Add via photo</button></div></div>
+      <div class="grid cols-2" id="pepgrid"></div>
+      <div class="grid cols-2" style="margin-top:16px">
+        <div class="card"><div class="cardhead"><div><h3>This week · injection schedule</h3><div class="sub">continuous + cycled compounds</div></div></div><div class="scrollx"><div class="schedgrid" id="schedgrid"></div></div></div>
+        <div class="card"><div class="cardhead"><div><h3>Injection-site rotation</h3><div class="sub">next site highlighted · rest each ≥7 days</div></div></div><div id="sitewrap" style="display:flex; flex-wrap:wrap; gap:8px"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="cardhead"><div><h3>Reconstitution calculator</h3><div class="sub">vial mg + BAC water + dose → draw on a U-100 insulin syringe</div></div></div>
+        <div class="calc">
+          <div class="field" style="margin:0"><label>Vial peptide (mg)</label><input id="cVial" type="number" value="5" step="0.5"></div>
+          <div class="field" style="margin:0"><label>BAC water (mL)</label><input id="cBac" type="number" value="2" step="0.5"></div>
+          <div class="field" style="margin:0"><label>Desired dose (mcg)</label><input id="cDose" type="number" value="250" step="50"></div>
+        </div>
+        <div class="calcout" id="calcout"></div>
+        <div class="sub" style="margin-top:11px">units (U-100) = dose(mcg) × BAC(mL) ÷ (10 × vial(mg)). Draw to that mark on a 100-unit insulin syringe.</div>
+      </div>
+      <details class="retired card" style="margin-top:16px">
+        <summary>Retired / not currently running (10)</summary>
+        <div id="retlist"></div>
+      </details>
+    </section>
+
+    <!-- ================= GOALS ================= -->
+    <section class="view" id="goals">
+      <div class="sub" style="margin-bottom:14px">Targets from your plan. Progress computed from current vs baseline. Kept to the six that move biological age.</div>
+      <div class="grid cols-3" id="goalgrid"></div>
+      <button class="card" id="addgoal" style="margin-top:16px; width:100%; border-style:dashed; text-align:center; color:var(--muted-solid); cursor:pointer; background:transparent">＋ Add a goal — the coach suggests a target range and the levers that move it</button>
+    </section>
+
+    <!-- ================= SUGGESTIONS ================= -->
+    <section class="view" id="suggestions">
+      <div class="topbar" style="position:static; padding:0 0 16px; border:0; background:none; backdrop-filter:none">
+        <div class="sub">Ranked across everything — labs, genetics, WHOOP, gut, protocol. Each tied to the data that triggered it.</div>
+        <div class="spacer"></div>
+        <select id="sugsort" aria-label="sort"><option value="imp">By impact</option><option value="eff">By effort (easiest first)</option></select>
+      </div>
+      <div class="grid" id="suggestlist" style="gap:12px"></div>
+    </section>
+
+    <!-- ================= ONBOARDING ================= -->
+    <section class="view" id="onboard">
+      <div class="wizard">
+        <div class="steps"><span class="stepdot on"></span><span class="stepdot"></span><span class="stepdot"></span><span class="stepdot"></span></div>
+        <div class="card">
+          <div class="wstep on" data-step="0">
+            <div class="eyebrow" style="color:var(--accent)">Welcome</div>
+            <h2 style="font-size:22px; margin:7px 0 8px">Let's build your longevity brain.</h2>
+            <p class="sub" style="font-size:13.5px; color:var(--text)">A few minutes of setup. Your data stays on your own deploy — nothing is sent to anyone. Answer a few questions, connect what you have, and the dashboard fills itself in.</p>
+            <div class="field"><label>What should we call you?</label><input placeholder="First name"></div>
+            <div class="field"><label>What brought you here?</label>
+              <div class="choicerow"><span class="choice sel">Longevity / bio-age</span><span class="choice">Energy &amp; recovery</span><span class="choice">Optimize labs</span><span class="choice">Gut health</span><span class="choice">Just curious</span></div></div>
+          </div>
+          <div class="wstep" data-step="1">
+            <div class="eyebrow" style="color:var(--accent)">About you</div>
+            <h2 style="font-size:20px; margin:7px 0 12px">The basics that set your ranges.</h2>
+            <div class="field"><div class="row2"><div><label>Date of birth</label><input type="date"></div><div><label>Sex at birth</label><select><option>Male</option><option>Female</option></select></div></div></div>
+            <div class="field"><div class="row2"><div><label>Height</label><input placeholder="6'4&quot;"></div><div><label>Weight</label><input placeholder="223 lb"></div></div></div>
+            <div class="field"><label>On any of these? (tunes your reference ranges)</label>
+              <div class="choicerow"><span class="choice">TRT / hormones</span><span class="choice">Metformin / GLP-1</span><span class="choice">Peptides</span><span class="choice sel">None</span></div></div>
+          </div>
+          <div class="wstep" data-step="2">
+            <div class="eyebrow" style="color:var(--accent)">Your goals</div>
+            <h2 style="font-size:20px; margin:7px 0 12px">Pick what matters most — change anytime.</h2>
+            <div class="choicerow"><span class="choice sel">Lower biological age</span><span class="choice sel">Raise HRV</span><span class="choice">Better sleep</span><span class="choice">Lower ApoB / heart</span><span class="choice">Build muscle</span><span class="choice">Lose fat</span><span class="choice">Gut repair</span><span class="choice">Balance hormones</span></div>
+            <div class="field"><label>Weekly grocery budget (for meal planning)</label><input placeholder="$140"></div>
+          </div>
+          <div class="wstep" data-step="3">
+            <div class="eyebrow" style="color:var(--accent)">Connect your data</div>
+            <h2 style="font-size:20px; margin:7px 0 6px">Bring in what you have.</h2>
+            <p class="sub">Skip anything you don't have — add it later, or enter values by hand.</p>
+            <div class="connectcard"><div class="ic">W</div><div><b>WHOOP</b><div class="sub">HRV, recovery, sleep, strain — live sync</div></div><button class="cbtn">Connect</button></div>
+            <div class="connectcard"><div class="ic">🧬</div><div><b>Genetics</b><div class="sub">Sequencing.com / 23andMe export</div></div><button class="cbtn">Upload</button></div>
+            <div class="connectcard"><div class="ic">🧪</div><div><b>Lab results</b><div class="sub">Drop a PDF → auto-parsed to biomarkers</div></div><button class="cbtn">Upload</button></div>
+            <div class="connectcard"><div class="ic">🦠</div><div><b>Viome</b><div class="sub">Gut report PDF → food engine</div></div><button class="cbtn">Upload</button></div>
+            <div class="connectcard"><div class="ic">✏️</div><div><b>No data yet?</b><div class="sub">Enter labs &amp; metrics by hand</div></div><button class="cbtn">Manual</button></div>
+          </div>
+        </div>
+        <div class="wizbtns"><button class="btn" id="wback" disabled>Back</button><button class="btn primary" id="wnext">Continue</button></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle-log">
+    <div style="display:flex; justify-content:space-between; align-items:center"><h3 id="mtitle-log">Log / add data</h3><button class="chip" id="mclose" style="cursor:pointer">✕ close</button></div>
+    <div class="segrow" id="mseg">
+      <span class="seg on" data-t="behavior">Behavior</span><span class="seg" data-t="lab">Lab value</span><span class="seg" data-t="supp">Supplement</span><span class="seg" data-t="meal">Meal</span><span class="seg" data-t="workout">Workout</span><span class="seg" data-t="metric">Metric</span>
+    </div>
+    <div id="mbody"></div>
+    <div class="wizbtns"><button class="btn" id="mcancel">Cancel</button><button class="btn primary" id="msave">Save</button></div>
+  </div>
+</div>
+<div class="overlay" id="foodoverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle-food">
+    <div style="display:flex; justify-content:space-between; align-items:center"><h3 id="mtitle-food">Snap a meal</h3><button class="chip" id="foodclose" style="cursor:pointer">✕ close</button></div>
+    <label class="photodrop" id="photodrop"><svg width="26" height="26" viewBox="0 0 24 24" stroke-width="1.6"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>Tap to take or upload a food photo</label>
+    <input type="file" accept="image/*" capture="environment" id="foodphoto" hidden>
+    <img id="foodpreview" alt="meal photo">
+    <button class="btn" id="analyze" style="width:100%; margin-top:12px">✨ Estimate macros from photo</button>
+    <div class="field"><label>Meal</label><input id="fname" placeholder="Salmon, sweet potato, brussels sprouts"></div>
+    <div class="field"><div class="row2"><div><label>Calories</label><input id="fk" placeholder="640"></div><div><label>Protein (g)</label><input id="fp" placeholder="44"></div></div></div>
+    <div class="field"><div class="row2"><div><label>Carbs (g)</label><input id="fc" placeholder="52"></div><div><label>Fat (g)</label><input id="ff" placeholder="26"></div></div></div>
+    <div class="wizbtns"><button class="btn" id="foodcancel">Cancel</button><button class="btn primary" id="foodsave">Log meal</button></div>
+  </div>
+</div>
+<div class="overlay" id="pepoverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle-pep">
+    <div style="display:flex; justify-content:space-between; align-items:center"><h3 id="mtitle-pep">Add peptide</h3><button class="chip" id="pepclose" style="cursor:pointer">✕ close</button></div>
+    <label class="photodrop" id="pepdrop"><svg width="26" height="26" viewBox="0 0 24 24" stroke-width="1.6" style="stroke:currentColor;fill:none"><path d="M4 8h3l2-2h6l2 2h3v11H4z"/><circle cx="12" cy="13.5" r="3.5"/></svg>Photo the vial / label (optional)</label>
+    <input type="file" accept="image/*" capture="environment" id="pepphotoin" hidden>
+    <img id="peppreview" alt="vial photo">
+    <div class="field"><label>Name</label><input id="pName" placeholder="BPC-157"></div>
+    <div class="field"><div class="row2"><div><label>Category</label><input id="pCat" placeholder="Healing / recovery"></div><div><label>Route</label><select id="pRoute"><option>SubQ</option><option>IM</option><option>Intranasal</option><option>Oral</option></select></div></div></div>
+    <div class="field"><div class="row2"><div><label>Dose (mcg)</label><input id="pDose" type="number" placeholder="250"></div><div><label>Timing</label><input id="pTiming" placeholder="Morning"></div></div></div>
+    <div class="field"><div class="row2"><div><label>Vial (mg)</label><input id="pVial" type="number" placeholder="5"></div><div><label>BAC water (mL)</label><input id="pBac" type="number" placeholder="2"></div></div></div>
+    <div class="field"><label>Cycle</label><input id="pCycle" placeholder="continuous / 10 on–10 off / 5 on–2 off"></div>
+    <div class="wizbtns"><button class="btn" id="pepcancel">Cancel</button><button class="btn primary" id="pepsave">Add peptide</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite">✓ Saved to your dashboard</div>
+
+<script>
+(function(){
+  "use strict";
+  var css = function(v){ return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); };
+  var C = function(){ return {
+    text:css('--text'), muted:css('--muted-solid'), line:css('--line'),
+    accent:css('--accent'), good:css('--good'), warn:css('--warn'), bad:css('--bad'), panel:css('--panel')
+  };};
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- data ---------- */
+  var spark = {
+    hrv:[38,41,35,29,44,31,27,33,48,36,30,25,34,40,28,31,45,33,29,36,32,27,41,35,30,33,38,31,28,34],
+    rhr:[64,63,65,68,66,69,70,67,64,66,69,71,68,65,67,70,66,64,68,72,69,66,64,67,70,68,65,67,69,68],
+    rec:[62,48,55,40,72,44,38,58,66,52,42,35,60,55,45,50,68,54,40,58,62,47,66,55,48,58,63,50,44,58],
+    sleep:[7.1,6.6,7.4,6.2,7.9,6.4,6.8,7.3,7.6,7.0,6.6,6.9,7.4,7.1,6.7,7.2,7.6,7.3,6.8,7.2,7.4,6.9,7.5,7.2,6.8,7.3,7.5,7.0,6.9,7.34]
+  };
+  var labs = [
+    {sys:'heart',name:'ApoB',val:'101',unit:'mg/dL',pos:78,st:'bad',stt:'High',opt:'optimal <80',genes:['SMAD3'],note:'#1 CV lever · particle count',trend:'up'},
+    {sys:'heart',name:'LDL-C',val:'114',unit:'mg/dL',pos:66,st:'warn',stt:'Watch',opt:'optimal <100'},
+    {sys:'heart',name:'LDL/ApoB ratio',val:'1.13',unit:'',pos:30,st:'warn',stt:'Small dense',opt:'>1.3 = larger particles'},
+    {sys:'heart',name:'hs-CRP',val:'<0.5',unit:'mg/L',pos:88,st:'good',stt:'Optimal',opt:'was 3.49 → resolved',genes:['SMAD3','IL36RN']},
+    {sys:'heart',name:'HDL',val:'45.6',unit:'mg/dL',pos:48,st:'warn',stt:'Average',opt:'Zone-2 lever'},
+    {sys:'hormones',name:'Total T',val:'806',unit:'ng/dL',pos:82,st:'good',stt:'Optimal',opt:'', genes:['IGSF10']},
+    {sys:'hormones',name:'Free T',val:'114.6',unit:'pg/mL',pos:46,st:'warn',stt:'Average',opt:'SHBG dragging fraction'},
+    {sys:'hormones',name:'SHBG',val:'62.2',unit:'nmol/L',pos:26,st:'warn',stt:'High',opt:'target <40 · Boron',genes:['IGSF10']},
+    {sys:'hormones',name:'Estrogen',val:'43.4',unit:'pg/mL',pos:62,st:'good',stt:'Re-graded OK',opt:'vendor flagged low → upper-normal MALE',note:'assay-context correction'},
+    {sys:'hormones',name:'DHEA-S',val:'303',unit:'µg/dL',pos:60,st:'good',stt:'Restored',opt:'was 164 crashed',genes:['POMC']},
+    {sys:'metabolic',name:'HbA1c',val:'5.2',unit:'%',pos:74,st:'good',stt:'Optimal',opt:'8+ diabetes genes',genes:['KCNJ11']},
+    {sys:'metabolic',name:'Triglycerides',val:'66',unit:'mg/dL',pos:84,st:'good',stt:'Optimal',opt:'was 42% high'},
+    {sys:'metabolic',name:'Uric acid',val:'5.29',unit:'mg/dL',pos:80,st:'good',stt:'Optimal',opt:'was 8.39 high'},
+    {sys:'iron',name:'Ferritin',val:'210',unit:'ng/mL',pos:34,st:'warn',stt:'Creeping',opt:'target <100 · HFE',genes:['HFE'],trend:'up'},
+    {sys:'iron',name:'Hematocrit',val:'47.8',unit:'%',pos:66,st:'good',stt:'OK',opt:'TRT + HFE watch'},
+    {sys:'iron',name:'Hemoglobin',val:'16.2',unit:'g/dL',pos:70,st:'good',stt:'Optimal',opt:''},
+    {sys:'liver',name:'ALT',val:'23',unit:'U/L',pos:72,st:'good',stt:'Optimal',opt:'was 45 → NAC/TUDCA',genes:['UGT1A']},
+    {sys:'liver',name:'GGT',val:'30.3',unit:'U/L',pos:78,st:'good',stt:'Optimal',opt:''},
+    {sys:'liver',name:'Vitamin D',val:'58.3',unit:'ng/mL',pos:80,st:'good',stt:'Optimal',opt:''}
+  ];
+  var genes = [
+    {gene:'HFE',geno:'GA · rs1800562',sys:'Iron',carrier:1,find:'Hemochromatosis carrier (C282Y). Iron over-absorption.',act:'→ Auto-monitor ferritin q-panel · donate blood q8–10wk · IP6',confirm:'Ferritin 210 ↑'},
+    {gene:'MMACHC',geno:'AG · rs200094982',sys:'B12',carrier:1,find:'Impaired B12 → active forms.',act:'→ Methylcobalamin 1000mcg · watch MMA + homocysteine',confirm:'B12 functional check'},
+    {gene:'UGT1A',geno:'GG · rs4124874',sys:'Liver',carrier:1,find:"Gilbert's — bilirubin + drug metabolism.",act:'→ NAC 900mg · monitor ALT under stack',confirm:'ALT 45→23'},
+    {gene:'SMAD3 + IL36RN',geno:'multi',sys:'Inflammation',carrier:0,find:'Genetic pro-inflammatory tendency.',act:'→ Lifelong anti-inflammatory · omega-3 + astaxanthin',confirm:'CRP tracked'},
+    {gene:'SCO2 + TSFM',geno:'mito',sys:'Mitochondria',carrier:0,find:'Respiratory-chain weak points.',act:'→ MOTS-c · CoQ10 · Methylene Blue · ALCAR',confirm:''},
+    {gene:'POMC',geno:'GC · rs8192606',sys:'Adrenal',carrier:0,find:'Adrenal-axis vulnerability (DHEA).',act:'→ DHEA 25mg',confirm:'DHEA-S 164→303'},
+    {gene:'SERPINA1',geno:'TA · rs17580',sys:'Lung',carrier:1,find:'Alpha-1-antitrypsin carrier.',act:'→ Never smoke · annual spirometry · watch resp rate',confirm:''},
+    {gene:'TTN',geno:'3 variants',sys:'Cardiac',carrier:0,find:'Titin — uncertain significance.',act:'→ Baseline echo · Zone-2 for cardiac protection',confirm:''},
+    {gene:'DRD4 + DRD5',geno:'CC/CC',sys:'Dopamine',carrier:0,find:'ADHD-spectrum receptor variants.',act:'→ L-Tyrosine · Semax · creatine',confirm:''}
+  ];
+  var foods = {
+    super:['Salmon','Brussels sprouts','Purple kale','Lion’s mane','Matcha','Sweet potato','Green lentils','Raspberry','Sauerkraut','Walnut oil'],
+    min:['Coffee','Spinach','Garlic','Salt','Olives','Tuna','Cow milk','Maple syrup'],
+    avoid:['Beef','Turmeric','Onion','Tomato','Cashews','Black beans','Whole wheat','Broccoli sprouts']
+  };
+  var corrByOutcome={
+    recovery:[
+      {lab:'Alcohol (any)',pct:-24,col:'bad'},{lab:'Late meal < 3h',pct:-18,col:'bad'},{lab:'THC at night',pct:-12,col:'bad'},
+      {lab:'Blood donation (2wk)',pct:-15,col:'warn'},{lab:'Screens off by 8pm',pct:9,col:'good'},{lab:'Zone-2 (prev day)',pct:8,col:'good'},{lab:'Magnesium glycinate',pct:6,col:'good'}
+    ],
+    rem:[
+      {lab:'THC at night',pct:-19,col:'bad'},{lab:'Late meal < 3h',pct:-16,col:'bad'},{lab:'Alcohol (any)',pct:-14,col:'bad'},
+      {lab:'Glycine + magnesium',pct:11,col:'good'},{lab:'Cool room 65°F',pct:7,col:'good'},{lab:'Consistent bedtime',pct:12,col:'good'}
+    ],
+    hrv:[
+      {lab:'Alcohol (any)',pct:-21,col:'bad'},{lab:'Blood donation (2wk)',pct:-16,col:'warn'},{lab:'High strain (Z4+)',pct:-13,col:'bad'},
+      {lab:'Late meal < 3h',pct:-10,col:'bad'},{lab:'8h+ sleep',pct:11,col:'good'},{lab:'True Zone-2 base',pct:9,col:'good'}
+    ]
+  };
+  var phenoMarkers=[
+    {n:'Albumin',v:'4.76 g/dL',dir:'younger',w:70},{n:'Creatinine',v:'1.14 mg/dL',dir:'older',w:40},
+    {n:'Glucose (fasting)',v:'92 mg/dL',dir:'younger',w:72},{n:'hs-CRP',v:'<0.5 mg/L',dir:'younger',w:90},
+    {n:'Lymphocyte %',v:'34 %',dir:'younger',w:66},{n:'MCV',v:'89 fL',dir:'neutral',w:55},
+    {n:'RDW',v:'12.9 %',dir:'younger',w:74},{n:'Alk phosphatase',v:'55 U/L',dir:'younger',w:70},
+    {n:'WBC',v:'5.2 K/µL',dir:'younger',w:68}
+  ];
+
+  /* ---------- render helpers ---------- */
+  function statusColor(s){ var c=C(); return s==='good'?c.good:s==='warn'?c.warn:s==='bad'?c.bad:c.muted; }
+
+  function renderLabs(filter){
+    var g=document.getElementById('labgrid'); g.innerHTML='';
+    labs.filter(function(l){return filter==='all'||l.sys===filter;}).forEach(function(l){
+      var col = statusColor(l.st);
+      var genes = (l.genes||[]).map(function(x){return '<span class="tag gene">'+x+'</span>';}).join('');
+      var note = l.note?'<span class="tag">'+l.note+'</span>':'';
+      var el=document.createElement('div'); el.className='biomarker';
+      el.innerHTML =
+        '<div class="mh"><div><div class="name">'+l.name+'</div><div class="meta">'+(l.opt||'')+'</div></div>'+
+        '<span class="statuspill s-'+l.st+'">'+l.stt+'</span></div>'+
+        '<div style="display:flex;align-items:baseline;gap:6px;margin-top:8px"><span class="value" style="color:'+col+'">'+l.val+'</span><span class="meta">'+l.unit+'</span></div>'+
+        '<div class="rb"><div class="rbtrack"><span class="rbdot" style="left:'+l.pos+'%;color:'+col+';background:'+col+'"></span></div>'+
+        '<div class="rbscale"><span>at-risk</span><span>optimal</span><span>at-risk</span></div></div>'+
+        ((genes||note)?'<div class="tagrow">'+genes+note+'</div>':'');
+      g.appendChild(el);
+    });
+  }
+  function renderHomeFlags(){
+    var host=document.getElementById('homeflags'); host.innerHTML='';
+    ['ApoB','Ferritin','Estrogen'].forEach(function(n){
+      var l=labs.find(function(x){return x.name===n;}); var col=statusColor(l.st);
+      var row=document.createElement('div'); row.className='listrow';
+      row.innerHTML='<span class="sysbadge">'+l.sys+'</span>'+
+        '<div style="flex:1"><div style="font-weight:600">'+l.name+' <span class="num" style="color:'+col+'">'+l.val+'</span> <span class="meta">'+l.unit+'</span></div>'+
+        '<div class="meta">'+(l.opt||'')+'</div></div>'+
+        '<span class="statuspill s-'+l.st+'">'+l.stt+'</span>';
+      host.appendChild(row);
+    });
+  }
+  function renderGenes(){
+    var g=document.getElementById('genegrid');
+    genes.forEach(function(x){
+      var badge = x.confirm?'<span class="confirm">✓ '+x.confirm+'</span>':(x.carrier?'<span class="carrier">carrier</span>':'');
+      var el=document.createElement('div'); el.className='genecard';
+      el.innerHTML='<div class="gh"><div><span class="gene">'+x.gene+'</span> <span class="sysbadge">'+x.sys+'</span></div>'+badge+'</div>'+
+        '<div class="geno">'+x.geno+'</div><p>'+x.find+'</p><div class="act">'+x.act+'</div>';
+      g.appendChild(el);
+    });
+  }
+  function renderFoods(){
+    var map={super:['food-super',C().good],min:['food-min',C().warn],avoid:['food-avoid',C().bad]};
+    Object.keys(map).forEach(function(k){
+      var host=document.getElementById(map[k][0]); if(!host)return; host.innerHTML='';
+      foods[k].forEach(function(f){
+        var d=document.createElement('div'); d.className='food';
+        d.innerHTML='<span class="fk" style="background:'+map[k][1]+'"></span>'+f; host.appendChild(d);
+      });
+    });
+  }
+  function renderCorr(outcome){
+    var host=document.getElementById('corrlist'); if(!host) return; host.innerHTML='';
+    var sel=document.getElementById('corrsel'); outcome=outcome||(sel?sel.value:'recovery');
+    var list=corrByOutcome[outcome]||corrByOutcome.recovery; var max=25, c=C();
+    list.forEach(function(x){
+      var col=x.col==='good'?c.good:x.col==='bad'?c.bad:c.warn;
+      var w=Math.abs(x.pct)/max*50, left=x.pct<0?(50-w):50;
+      var row=document.createElement('div'); row.className='corr';
+      row.innerHTML='<div class="lab">'+x.lab+'</div>'+
+        '<div class="barwrap"><span class="mid"></span><span class="bar" style="left:'+left+'%; width:'+w+'%; background:'+col+'"></span></div>'+
+        '<div class="pct" style="color:'+col+'">'+(x.pct>0?'+':'')+x.pct+'%</div>';
+      host.appendChild(row);
+    });
+  }
+  function renderPheno(){
+    var h=document.getElementById('phenoage'); if(!h) return; h.innerHTML=''; var c=C();
+    phenoMarkers.forEach(function(m){
+      var col=m.dir==='younger'?c.good:m.dir==='older'?c.bad:c.muted;
+      var row=document.createElement('div'); row.className='trackbar';
+      row.innerHTML='<span class="tl" style="width:130px">'+m.n+'</span><span class="tt"><i style="width:'+m.w+'%; background:'+col+'"></i></span><span class="tv" style="width:120px; color:'+col+'">'+m.v+'</span>';
+      h.appendChild(row);
+    });
+  }
+
+  /* ---------- nutrition / supps / suggestions / goals ---------- */
+  var meals=[
+    {time:'10:00 AM',name:'Breakfast · break fast',kcal:520,p:38,items:['Steel-cut oats + cinnamon','Pea protein (Superfood)','Raspberries + blueberries','MCT oil + walnuts']},
+    {time:'1:30 PM',name:'Lunch',kcal:640,p:44,items:['Wild salmon (Superfood)','Roasted sweet potato','Brussels sprouts + olive oil','Green tea (Superfood)']},
+    {time:'5:30 PM',name:'Dinner · last meal',kcal:700,p:50,items:['Chicken thigh (Enjoy)','Green lentils (Superfood)','Cabbage + chard + ghee','Raw sauerkraut (gut)']},
+    {time:'Snacks',name:'In-window',kcal:300,p:18,items:['Apple + kiwi (Superfood)','Bone broth','Small handful walnuts']}
+  ];
+  var macros=[
+    {l:'Calories',v:2160,t:2300,unit:'',col:'accent',pct:94},
+    {l:'Protein',v:150,t:180,unit:'g',col:'good',pct:83},
+    {l:'Carbs',v:182,t:190,unit:'g',col:'accent',pct:96},
+    {l:'Fat',v:88,t:90,unit:'g',col:'accent',pct:98},
+    {l:'Fiber',v:41,t:40,unit:'g',col:'good',pct:100}
+  ];
+  var grocery=[
+    {aisle:'Seafood',n:'Wild salmon fillet (2 lb)',price:16.99,was:21.99,sale:1,store:'Kroger'},
+    {aisle:'Seafood',n:'Bone broth (32oz ×2)',price:7.98,store:'Kroger'},
+    {aisle:'Produce',n:'Brussels sprouts (2 lb)',price:3.49,was:4.99,sale:1,store:'Kroger'},
+    {aisle:'Produce',n:'Purple cabbage + chard',price:4.20,store:'Kroger'},
+    {aisle:'Produce',n:'Sweet potatoes (3 lb)',price:2.97,store:'Kroger'},
+    {aisle:'Produce',n:'Apples + kiwi + berries',price:11.40,was:13.50,sale:1,store:'Kroger'},
+    {aisle:'Protein',n:'Chicken thigh (3 lb)',price:8.97,store:'Kroger'},
+    {aisle:'Pantry',n:'Steel-cut oats + green lentils',price:6.80,store:'Kroger'},
+    {aisle:'Pantry',n:'Pea protein (2 lb)',price:19.99,was:24.99,sale:1,store:'Whole Foods',alt:13.99,altn:'store brand'},
+    {aisle:'Pantry',n:'Olive oil + ghee + MCT',price:22.50,store:'Whole Foods',alt:13.50,altn:'store brand'},
+    {aisle:'Ferments',n:'Raw sauerkraut',price:5.49,store:'Whole Foods'}
+  ];
+  var groceryBudget=140, budgetMode=false;
+  var supps=[
+    {n:'NAC',dose:'900mg · fasted AM',days:6,cost:14,st:'low'},
+    {n:'Methylcobalamin B12',dose:'1000mcg · SL first',days:22,cost:9,st:'ok'},
+    {n:'DHEA',dose:'25mg · AM',days:3,cost:15,st:'reorder'},
+    {n:'Omega-3',dose:'3600mg · breakfast',days:18,cost:28,st:'ok'},
+    {n:'Boron',dose:'10mg · AM',days:40,cost:8,st:'ok'},
+    {n:'Magnesium glycinate',dose:'340mg · bed',days:11,cost:18,st:'ok'},
+    {n:'NMN',dose:'500mg · AM',days:5,cost:42,st:'low'},
+    {n:'Ubiquinol (CoQ10)',dose:'100mg · breakfast',days:26,cost:34,st:'ok'},
+    {n:'IP6',dose:'1–2g · 3pm alone',days:2,cost:15,st:'reorder'},
+    {n:'Quercetin',dose:'500mg · AM',days:30,cost:16,st:'ok'}
+  ];
+  var suggestions=[
+    {imp:92,eff:'med',title:'Lower ApoB — your #1 cardiovascular lever',src:['Labs','Genetics'],body:'ApoB 101 + LDL/ApoB 1.13 (small dense particles). Bergamot + CholestePure already staged; add real Zone-2 volume. ApoB drives risk more than LDL-C.',why:'ApoB out of range · Jun 5 panel'},
+    {imp:88,eff:'low',title:'Fix sleep consistency (53%) before adding anything',src:['WHOOP','Trends'],body:'Biggest HRV lever by effect size. Stop mid-night eating + late THC — both suppress REM (13%, low) → next-day HRV.',why:'N-of-1: late meals −18% recovery'},
+    {imp:76,eff:'low',title:'Keep the iron-reduction protocol going',src:['Labs','Genetics'],body:'Ferritin 210 creeping (+11%), HFE carrier. Donate on schedule, IP6 at 3pm, Vitamin C fasted only.',why:'Ferritin ↑ across 3 panels'},
+    {imp:71,eff:'med',title:'Switch to TRUE Zone-2, cut volume',src:['WHOOP'],body:'Sessions hit Z4 (max 163–175) while HRV dropped — dose-response flipped. Cap HR, less volume until sleep is fixed.',why:'RHR stuck 68; strain up, HRV down'},
+    {imp:64,eff:'med',title:'Prioritize gut-repair foods',src:['Viome'],body:'11 Attention scores. Emphasize butyrate + glutamine foods (sauerkraut, oats, cabbage); hold the Avoid list 6 months.',why:'Gut microbiome = Attention'},
+    {imp:52,eff:'low',title:'Lower SHBG to free up testosterone',src:['Labs'],body:'SHBG 62 dragging free-T fraction despite total-T 806. Boron + DIM already staged — stay consistent.',why:'Free-T average while total-T optimal'},
+    {imp:62,eff:'low',title:'Overlap: copper from GHK-Cu + copper supplement',src:['Peptides','Supplements','Genetics'],body:'GHK-Cu delivers copper AND you take oral Copper 1–2mg. As an ATP7B (Wilson) carrier, watch total copper — test ceruloplasmin + copper and likely drop the oral copper on GHK-Cu days.',why:'Copper double-dosed · ATP7B carrier'},
+    {imp:58,eff:'low',title:'Overlap: 5 mitochondrial agents stacked',src:['Peptides','Supplements'],body:'SS-31 + MOTS-c + CoQ10 + Methylene Blue + ALCAR all target mitochondria. Genetically justified (SCO2/TSFM), but that is heavy parallel coverage — decide which earn their place or cycle some.',why:'5 overlapping mito mechanisms'},
+    {imp:55,eff:'low',title:'Overlap: quad liver / glutathione stack',src:['Supplements'],body:'NAC + SAMe + Milk Thistle + TUDCA all support liver/glutathione. Justified when ALT was 45 — but ALT is now 23, so you can likely trim one (e.g. Milk Thistle) and re-test.',why:'4 overlapping liver agents · ALT normalized'}
+  ];
+  var effRank={low:0,med:1,high:2};
+  var goals=[
+    {n:'HRV (rMSSD)',now:'33.6',tgt:'50 ms',pct:41,col:'warn',eta:'ceiling proven at 67 — behavioral'},
+    {n:'ApoB',now:'101',tgt:'<80 mg/dL',pct:28,col:'bad',eta:'recheck Sep panel'},
+    {n:'Ferritin',now:'210',tgt:'<100 ng/mL',pct:35,col:'warn',eta:'~4 donations'},
+    {n:'Longevity score',now:'52',tgt:'82 / 100',pct:52,col:'warn',eta:'52-week arc'},
+    {n:'Resting HR',now:'68',tgt:'56 bpm',pct:33,col:'warn',eta:'Zone-2 dependent'},
+    {n:'REM sleep',now:'13%',tgt:'20%',pct:38,col:'bad',eta:'fix late meals + THC'}
+  ];
+
+  function renderNutrition(){
+    var c=C(), mr=document.getElementById('macrorow'); mr.innerHTML='';
+    macros.forEach(function(m){
+      var col=css('--'+m.col), d=document.createElement('div'); d.className='macro';
+      d.innerHTML='<div class="v">'+m.v+'</div><div class="l">'+m.l+(m.unit?' ('+m.unit+')':'')+'</div>'+
+        '<div class="bar"><i style="width:'+Math.min(100,m.pct)+'%; background:'+col+'"></i></div>'+
+        '<div class="sub" style="font-size:10px; margin-top:5px">/ '+m.t+(m.unit||'')+'</div>';
+      mr.appendChild(d);
+    });
+    var mg=document.getElementById('mealgrid'); mg.innerHTML='';
+    meals.forEach(function(m){
+      var li=m.items.map(function(i){return '<li>'+i+'</li>';}).join('');
+      var d=document.createElement('div'); d.className='meal';
+      d.innerHTML='<div class="mt"><div><div class="mtime">'+m.time+'</div><b>'+m.name+'</b></div><span class="kcal">'+m.kcal+' kcal · '+m.p+'g P</span></div><div class="body"><ul>'+li+'</ul></div>';
+      mg.appendChild(d);
+    });
+    var total=0,saved=0;
+    grocery.forEach(function(g){ var p=(budgetMode&&g.alt)?g.alt:g.price; total+=p; if(g.was) saved+=(g.was-g.price); if(budgetMode&&g.alt) saved+=(g.price-g.alt); });
+    var gl=document.getElementById('groclist'); gl.innerHTML=''; var aisles={};
+    grocery.forEach(function(g){ (aisles[g.aisle]=aisles[g.aisle]||[]).push(g); });
+    Object.keys(aisles).forEach(function(a){
+      var h=document.createElement('div'); h.className='eyebrow'; h.style.cssText='margin:12px 0 2px'; h.textContent=a; gl.appendChild(h);
+      aisles[a].forEach(function(g){
+        var use=(budgetMode&&g.alt)?g.alt:g.price;
+        var swap=(budgetMode&&g.alt)?'<span class="sale" style="color:var(--accent); background:var(--accent-weak)">'+g.altn+'</span>':'';
+        var strike=(g.was?g.was:((budgetMode&&g.alt)?g.price:0));
+        var r=document.createElement('div'); r.className='gitem';
+        r.innerHTML='<span class="gn">'+g.n+' <span class="store">· '+g.store+'</span></span>'+swap+
+          (g.sale?'<span class="sale">SALE</span>':'')+(strike?'<span class="was">$'+strike.toFixed(2)+'</span>':'')+
+          '<span class="price">$'+use.toFixed(2)+'</span>';
+        gl.appendChild(r);
+      });
+    });
+    document.getElementById('budgettxt').textContent='$'+total.toFixed(2)+' / $'+groceryBudget;
+    var pct=Math.min(100,total/groceryBudget*100), bf=document.getElementById('budgetfill');
+    bf.style.width=pct+'%'; bf.style.background=total<=groceryBudget*0.9?c.good:total<=groceryBudget?c.warn:c.bad;
+    var slider=document.getElementById('budgetslider'); if(slider && +slider.value!==groceryBudget) slider.value=groceryBudget;
+    var diff=groceryBudget-total, msg=document.getElementById('budgetmsg');
+    if(msg) msg.innerHTML = diff>=0 ? '<span style="color:var(--good); font-weight:600">$'+diff.toFixed(2)+' under budget</span>' : '<span style="color:var(--bad); font-weight:600">$'+Math.abs(diff).toFixed(2)+' over — try cheaper swaps</span>';
+    var fit=document.getElementById('budgetfit'); if(fit) fit.textContent = budgetMode?'Use premium brands':'Find cheaper swaps';
+    document.getElementById('savepill').textContent='saved $'+saved.toFixed(2)+(budgetMode?' incl. swaps':' on sales');
+  }
+  function renderSupps(){
+    var tb=document.querySelector('#supptable tbody'); tb.innerHTML='';
+    supps.forEach(function(s){
+      var cls=s.st==='ok'?'s-good':s.st==='low'?'s-warn':'s-bad', lbl=s.st==='ok'?'In stock':s.st==='low'?'Low':'Reorder';
+      var tr=document.createElement('tr');
+      tr.innerHTML='<td><b>'+s.n+'</b></td><td class="sub">'+s.dose+'</td><td class="num">'+s.days+' d</td><td class="num">$'+s.cost+'</td><td><span class="statuspill '+cls+'">'+lbl+'</span></td>';
+      tb.appendChild(tr);
+    });
+  }
+  function renderSuggest(sort){
+    var host=document.getElementById('suggestlist'); host.innerHTML=''; var arr=suggestions.slice();
+    if(sort==='eff') arr.sort(function(a,b){return effRank[a.eff]-effRank[b.eff] || b.imp-a.imp;});
+    else arr.sort(function(a,b){return b.imp-a.imp;});
+    arr.forEach(function(s){
+      var col=s.imp>=85?css('--bad'):s.imp>=70?css('--warn'):css('--accent');
+      var src=s.src.map(function(x){return '<span class="tag gene">'+x+'</span>';}).join('');
+      var d=document.createElement('div'); d.className='suggest';
+      d.innerHTML='<div class="imp"><div class="n" style="color:'+col+'">'+s.imp+'</div><div class="l">impact</div></div>'+
+        '<div style="flex:1"><div style="font-weight:600; font-size:14px">'+s.title+'</div>'+
+        '<div class="sub" style="color:var(--text); margin:6px 0 9px">'+s.body+'</div>'+
+        '<div class="tagrow">'+src+'<span class="tag">effort: '+s.eff+'</span><span class="tag">why: '+s.why+'</span></div></div>';
+      host.appendChild(d);
+    });
+  }
+  function renderGoals(){
+    var g=document.getElementById('goalgrid'); g.innerHTML='';
+    goals.forEach(function(x){
+      var col=css('--'+x.col), d=document.createElement('div'); d.className='goal';
+      d.innerHTML='<div class="gh"><div><div class="eyebrow">'+x.n+'</div><div class="now">'+x.now+'</div></div><div class="tgt2">→ '+x.tgt+'</div></div>'+
+        '<div class="prog"><i style="width:'+x.pct+'%; background:'+col+'"></i></div>'+
+        '<div class="sub" style="margin-top:8px">'+x.pct+'% there · '+x.eta+'</div>';
+      g.appendChild(d);
+    });
+  }
+
+  /* ---------- canvas ---------- */
+  function dpi(cv){ var r=devicePixelRatio||1, w=cv.clientWidth||cv.width, h=cv.clientHeight||cv.height;
+    cv.width=w*r; cv.height=h*r; var x=cv.getContext('2d'); x.setTransform(r,0,0,r,0,0); return {x:x,w:w,h:h}; }
+
+  function drawSpark(cv){
+    var d=spark[cv.dataset.spark]; var col=css('--'+cv.dataset.col); var o=dpi(cv);
+    var min=Math.min.apply(0,d), max=Math.max.apply(0,d), pad=3;
+    var X=function(i){return pad+i/(d.length-1)*(o.w-2*pad);};
+    var Y=function(v){return o.h-pad-(v-min)/(max-min||1)*(o.h-2*pad);};
+    o.x.beginPath(); o.x.moveTo(X(0),o.h);
+    for(var i=0;i<d.length;i++) o.x.lineTo(X(i),Y(d[i]));
+    o.x.lineTo(X(d.length-1),o.h); o.x.closePath();
+    o.x.fillStyle=col+'22'; o.x.fill();
+    o.x.beginPath(); for(i=0;i<d.length;i++){ i?o.x.lineTo(X(i),Y(d[i])):o.x.moveTo(X(i),Y(d[i])); }
+    o.x.strokeStyle=col; o.x.lineWidth=1.6; o.x.lineJoin='round'; o.x.stroke();
+    o.x.beginPath(); o.x.arc(X(d.length-1),Y(d[d.length-1]),2.6,0,7); o.x.fillStyle=col; o.x.fill();
+  }
+  function drawRing(cv){
+    var pct=+cv.dataset.ring, col=css('--'+(cv.dataset.ringcolor||'accent')), o=dpi(cv);
+    var cx=o.w/2, cy=o.h/2, r=Math.min(o.w,o.h)/2-8, lw=11;
+    o.x.lineWidth=lw; o.x.lineCap='round';
+    o.x.beginPath(); o.x.arc(cx,cy,r,0,7); o.x.strokeStyle=css('--line'); o.x.stroke();
+    if(cv.dataset.multi){
+      var segs=[[43,css('--good')],[37,css('--warn')],[20,css('--bad')]], a=-Math.PI/2;
+      segs.forEach(function(s){ var a2=a+s[0]/100*Math.PI*2; o.x.beginPath(); o.x.arc(cx,cy,r,a+0.04,a2-0.04); o.x.strokeStyle=s[1]; o.x.stroke(); a=a2; });
+    } else {
+      o.x.beginPath(); o.x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+pct/100*Math.PI*2); o.x.strokeStyle=col; o.x.stroke();
+      o.x.fillStyle=css('--text'); o.x.font='700 '+(r*0.5)+'px '+css('--mono'); o.x.textAlign='center'; o.x.textBaseline='middle';
+      o.x.fillText(pct+'%',cx,cy);
+    }
+  }
+  function drawGauge(cv){
+    var o=dpi(cv), cx=o.w/2, cy=o.h/2, r=Math.min(o.w,o.h)/2-8, lw=11;
+    var chrono=38, bio=29.6, scale=60;
+    o.x.lineWidth=lw; o.x.lineCap='round';
+    o.x.beginPath(); o.x.arc(cx,cy,r,0,7); o.x.strokeStyle=css('--line'); o.x.stroke();
+    o.x.beginPath(); o.x.arc(cx,cy,r,-Math.PI/2,-Math.PI/2+bio/scale*Math.PI*2); o.x.strokeStyle=css('--good'); o.x.stroke();
+    // chronological tick
+    var a=-Math.PI/2+chrono/scale*Math.PI*2;
+    o.x.beginPath(); o.x.moveTo(cx+Math.cos(a)*(r-lw),cy+Math.sin(a)*(r-lw)); o.x.lineTo(cx+Math.cos(a)*(r+lw*0.6),cy+Math.sin(a)*(r+lw*0.6));
+    o.x.strokeStyle=css('--muted-solid'); o.x.lineWidth=2.5; o.x.stroke();
+    o.x.fillStyle=css('--muted-solid'); o.x.font='600 10px '+css('--sans'); o.x.textAlign='center'; o.x.fillText('chrono',cx+Math.cos(a)*(r+lw*1.6),cy+Math.sin(a)*(r+lw*1.6));
+  }
+  function drawTrend(cv){
+    var o=dpi(cv); var c=C();
+    var d=spark.hrv.concat(spark.hrv.map(function(v){return v+ (Math.round((v%7)-3));})); // ~60 pts
+    var min=10,max=70, padL=34,padB=22,padT=10,padR=12;
+    var X=function(i){return padL+i/(d.length-1)*(o.w-padL-padR);};
+    var Y=function(v){return padT+(1-(v-min)/(max-min))*(o.h-padT-padB);};
+    // grid
+    o.x.strokeStyle=c.line; o.x.lineWidth=1; o.x.fillStyle=c.muted; o.x.font='10px '+css('--mono'); o.x.textAlign='right';
+    [10,30,50,70].forEach(function(v){ o.x.beginPath(); o.x.moveTo(padL,Y(v)); o.x.lineTo(o.w-padR,Y(v)); o.x.stroke(); o.x.fillText(v,padL-6,Y(v)+3); });
+    // target line
+    o.x.setLineDash([4,4]); o.x.strokeStyle=c.good; o.x.beginPath(); o.x.moveTo(padL,Y(50)); o.x.lineTo(o.w-padR,Y(50)); o.x.stroke(); o.x.setLineDash([]);
+    // area+line
+    o.x.beginPath(); o.x.moveTo(X(0),o.h-padB);
+    for(var i=0;i<d.length;i++) o.x.lineTo(X(i),Y(d[i]));
+    o.x.lineTo(X(d.length-1),o.h-padB); o.x.closePath(); o.x.fillStyle=c.accent+'18'; o.x.fill();
+    o.x.beginPath(); for(i=0;i<d.length;i++){ i?o.x.lineTo(X(i),Y(d[i])):o.x.moveTo(X(i),Y(d[i])); }
+    o.x.strokeStyle=c.accent; o.x.lineWidth=1.8; o.x.lineJoin='round'; o.x.stroke();
+    // annotations
+    var ann=[[8,'Altitude',c.bad],[26,'Blood donation',c.warn],[44,'Started SS-31',c.accent]];
+    ann.forEach(function(a){
+      var xx=X(a[0]); o.x.setLineDash([3,3]); o.x.strokeStyle=a[2]; o.x.beginPath(); o.x.moveTo(xx,padT); o.x.lineTo(xx,o.h-padB); o.x.stroke(); o.x.setLineDash([]);
+      o.x.beginPath(); o.x.arc(xx,padT+3,3,0,7); o.x.fillStyle=a[2]; o.x.fill();
+      o.x.fillStyle=a[2]; o.x.font='600 9.5px '+css('--sans'); o.x.textAlign='left'; o.x.fillText(a[1],xx+4,padT+11);
+    });
+  }
+
+  function drawAll(){
+    document.querySelectorAll('canvas').forEach(function(cv){
+      if(cv.offsetParent===null) return; // skip hidden
+      if(cv.dataset.spark) drawSpark(cv);
+      else if(cv.dataset.gauge) drawGauge(cv);
+      else if(cv.dataset.ring!==undefined && cv.dataset.ring!=='') drawRing(cv);
+      else if(cv.dataset.trend) drawTrend(cv);
+    });
+  }
+
+  /* ---------- nav / views ---------- */
+  var titles={home:['Command Center','everything, cross-referenced'],vitals:['Vitals · WHOOP','HRV, recovery, sleep architecture'],
+    labs:['Labs','42 markers · optimal ranges · re-graded'],genetics:['Genetics','34 WGS reports → monitoring rules'],
+    gut:['Gut · Viome','microbiome scores + food engine'],protocol:['Protocol','39-item stack · interaction-aware'],
+    nutrition:['Nutrition · Meal Plan','Viome-constrained meals + groceries on sale'],fitness:['Fitness','training load · zones · plan'],supplements:['Supplements','inventory · spend · reorder'],peptides:['Peptides','injectable protocol · reconstitution · cycling'],
+    goals:['Goals','targets that move biological age'],suggestions:['Suggestions','ranked across all your data'],
+    coach:['AI Longevity Doctor','grounded in your data + knowledge base'],trends:['Trends · N-of-1','intervention → outcome effect sizes'],
+    onboard:['Setup','get your dashboard ready']};
+  function showView(v){
+    document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active', n.dataset.view===v);});
+    document.querySelectorAll('.view').forEach(function(s){s.classList.toggle('active', s.id===v);});
+    if(titles[v]){document.getElementById('vtitle').textContent=titles[v][0]; document.getElementById('vsub').textContent=titles[v][1];}
+    var rl=document.querySelector('.rail'); if(rl) rl.classList.remove('open');
+    window.scrollTo(0,0); requestAnimationFrame(drawAll);
+  }
+  document.getElementById('nav').addEventListener('click',function(e){ var b=e.target.closest('.navitem'); if(b) showView(b.dataset.view); });
+  document.getElementById('setup').addEventListener('click',function(){ showView('onboard'); });
+  document.getElementById('suppadd').addEventListener('click',function(){ openModal('supp'); });
+
+  document.getElementById('labsys').addEventListener('change',function(e){ renderLabs(e.target.value); });
+  document.getElementById('sugsort').addEventListener('change',function(e){ renderSuggest(e.target.value); });
+  document.getElementById('theme').addEventListener('click',function(){
+    var cur=document.documentElement.getAttribute('data-theme');
+    var next = cur==='dark'?'light': cur==='light'?'dark' : (matchMedia('(prefers-color-scheme: dark)').matches?'light':'dark');
+    document.documentElement.setAttribute('data-theme',next);
+    renderFoods(); renderCorr(); renderLabs(document.getElementById('labsys').value); renderHomeFlags(); renderPheno();
+    renderNutrition(); renderSupps(); renderSuggest(document.getElementById('sugsort').value); renderGoals(); renderTracker();
+    renderPeptides(); renderSchedule(); renderSites(); pcalc(); renderFitness();
+    requestAnimationFrame(drawAll);
+  });
+
+  /* ---------- onboarding wizard ---------- */
+  var wstep=0, wtotal=4, wback=document.getElementById('wback'), wnext=document.getElementById('wnext');
+  function setStep(i){
+    wstep=Math.max(0,Math.min(wtotal-1,i));
+    document.querySelectorAll('.wstep').forEach(function(s){s.classList.toggle('on', +s.dataset.step===wstep);});
+    document.querySelectorAll('.stepdot').forEach(function(d,ix){d.classList.toggle('on', ix<=wstep);});
+    wback.disabled=wstep===0; wnext.textContent=wstep===wtotal-1?'Finish setup':'Continue';
+  }
+  wback.addEventListener('click',function(){ setStep(wstep-1); });
+  wnext.addEventListener('click',function(){ if(wstep===wtotal-1){ showView('home'); setStep(0); } else setStep(wstep+1); });
+  document.getElementById('onboard').addEventListener('click',function(e){ var c=e.target.closest('.choice'); if(c) c.classList.toggle('sel'); });
+  document.getElementById('addgoal').addEventListener('click',function(){ showView('onboard'); setStep(2); });
+
+  /* ---------- a11y helpers ---------- */
+  var lastFocus=null, appEl=document.querySelector('.app');
+  function modalOpen(o){ o.classList.add('open'); lastFocus=document.activeElement; if(appEl) appEl.setAttribute('inert',''); var f=o.querySelector('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); if(f) setTimeout(function(){ try{f.focus();}catch(e){} },20); }
+  function modalClose(o){ o.classList.remove('open'); if(appEl) appEl.removeAttribute('inert'); if(lastFocus&&lastFocus.focus){ try{lastFocus.focus();}catch(e){} } }
+  function a11yEnhance(root){ root=root||document;
+    root.querySelectorAll('label').forEach(function(l){ if(l.getAttribute('for'))return; var c=l.parentElement.querySelector('input,select,textarea'); if(c&&!c.getAttribute('aria-label')) c.setAttribute('aria-label', l.textContent.trim()); });
+    root.querySelectorAll('.seg,.choice,.photodrop').forEach(function(el){ if(!el.hasAttribute('tabindex')) el.tabIndex=0; if(!el.getAttribute('role')) el.setAttribute('role','button'); });
+  }
+  document.addEventListener('keydown',function(e){
+    var o=document.querySelector('.overlay.open');
+    if(o){ if(e.key==='Escape'){ modalClose(o); return; }
+      if(e.key==='Tab'){ var f=o.querySelectorAll('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])'); if(f.length){ var a=f[0],b=f[f.length-1]; if(e.shiftKey&&document.activeElement===a){ e.preventDefault(); b.focus(); } else if(!e.shiftKey&&document.activeElement===b){ e.preventDefault(); a.focus(); } } return; } }
+    if((e.key==='Enter'||e.key===' ') && e.target.matches && e.target.matches('.seg,.choice,.photodrop')){ e.preventDefault(); e.target.click(); }
+  });
+
+  /* ---------- input modal ---------- */
+  var overlay=document.getElementById('overlay');
+  var forms={
+    behavior:'<p class="sub">Log something that might affect your metrics — feeds the N-of-1 engine.</p>'+
+      '<div class="field"><label>When</label><input type="date"></div>'+
+      '<div class="field"><label>What happened</label><div class="choicerow"><span class="choice sel">Alcohol</span><span class="choice">Late meal</span><span class="choice">THC</span><span class="choice">Poor sleep</span><span class="choice">Travel</span><span class="choice">Sick</span><span class="choice">Sauna</span><span class="choice">Cold plunge</span></div></div>'+
+      '<div class="field"><label>Note (optional)</label><input placeholder="2 drinks, dinner out"></div>',
+    lab:'<div class="field"><label>Marker</label><select><option>ApoB</option><option>LDL-C</option><option>hs-CRP</option><option>Ferritin</option><option>Free T</option><option>HbA1c</option><option>Other…</option></select></div>'+
+      '<div class="field"><div class="row2"><div><label>Value</label><input placeholder="101"></div><div><label>Unit</label><input placeholder="mg/dL"></div></div></div>'+
+      '<div class="field"><label>Collected</label><input type="date"></div>',
+    supp:'<div class="field"><label>Supplement</label><input placeholder="NAC"></div>'+
+      '<div class="field"><div class="row2"><div><label>Dose</label><input placeholder="900mg"></div><div><label>Timing</label><select><option>Fasted AM</option><option>Breakfast</option><option>Afternoon</option><option>Dinner</option><option>Bed</option></select></div></div></div>'+
+      '<div class="field"><label>Count in bottle (for days-left)</label><input placeholder="60"></div>',
+    meal:'<div class="field"><label>What did you eat</label><textarea rows="2" placeholder="Salmon, sweet potato, brussels sprouts"></textarea></div>'+
+      '<div class="field"><div class="row2"><div><label>Est. calories</label><input placeholder="640"></div><div><label>Protein (g)</label><input placeholder="42"></div></div></div>'+
+      '<div class="field"><label>Photo (auto-estimates macros)</label><input type="file" accept="image/*"></div>',
+    metric:'<div class="field"><label>Metric</label><select><option>Weight</option><option>Waist</option><option>Blood pressure</option><option>Mood (1–10)</option><option>Resting HR</option></select></div>'+
+      '<div class="field"><label>Value</label><input placeholder="223"></div>'+
+      '<div class="field"><label>Date</label><input type="date"></div>',
+    workout:'<div class="field"><label>Type</label><select><option>Zone-2 cardio</option><option>Strength</option><option>Spin</option><option>Run</option><option>Yoga</option><option>HIIT</option></select></div>'+
+      '<div class="field"><div class="row2"><div><label>Duration (min)</label><input type="number" placeholder="45"></div><div><label>Avg HR</label><input type="number" placeholder="138"></div></div></div>'+
+      '<div class="field"><div class="row2"><div><label>Max HR</label><input type="number" placeholder="150"></div><div><label>Strain</label><input type="number" placeholder="8.4"></div></div></div>'
+  };
+  function renderModal(t){
+    document.querySelectorAll('#mseg .seg').forEach(function(s){s.classList.toggle('on', s.dataset.t===t);});
+    document.getElementById('mbody').innerHTML=forms[t];
+    a11yEnhance(document.getElementById('mbody'));
+  }
+  function openModal(t){ renderModal(typeof t==='string'?t:'behavior'); modalOpen(overlay); }
+  function closeModal(){ modalClose(overlay); }
+  document.getElementById('addbtn').addEventListener('click',openModal);
+  document.getElementById('mseg').addEventListener('click',function(e){ var s=e.target.closest('.seg'); if(s) renderModal(s.dataset.t); });
+  document.getElementById('mbody').addEventListener('click',function(e){ var c=e.target.closest('.choice'); if(c) c.classList.toggle('sel'); });
+  overlay.addEventListener('click',function(e){ if(e.target===overlay) closeModal(); });
+  document.getElementById('mclose').addEventListener('click',closeModal);
+  document.getElementById('mcancel').addEventListener('click',closeModal);
+  document.getElementById('msave').addEventListener('click',function(){
+    closeModal(); var t=document.getElementById('toast'); t.classList.add('show'); setTimeout(function(){t.classList.remove('show');},1700);
+  });
+  setStep(0);
+
+  /* ---------- time-range dropdown ---------- */
+  var kpiVals={
+    '7':  {hrv:32.9,rhr:75,rec:47,sleep:6.9, d:{hrv:['▼ 8%','down'],rhr:['▲ 5 bpm','down'],rec:['▼ 9%','down'],sleep:['▼ 0.3h','down']}},
+    '30': {hrv:33.6,rhr:68,rec:58,sleep:7.34,d:{hrv:['▼ 6%','down'],rhr:['▲ 2 bpm','down'],rec:['▲ 5%','up'],sleep:['▲ 0.4h','up']}},
+    '90': {hrv:35.1,rhr:66,rec:60,sleep:7.4, d:{hrv:['▲ 4%','up'],rhr:['▼ 2 bpm','up'],rec:['▲ 6%','up'],sleep:['▲ 0.2h','up']}},
+    '365':{hrv:35.8,rhr:67,rec:52,sleep:7.5, d:{hrv:['▲ 2%','up'],rhr:['▼ 1 bpm','up'],rec:['▼ 3%','flat'],sleep:['▲ 0.5h','up']}}
+  };
+  var units2={hrv:' ms',rhr:' bpm',rec:' %',sleep:' h'};
+  function genSpark(v,m,pts){
+    var amp={hrv:8,rhr:4,rec:13,sleep:0.6}[m], dec={hrv:1,rhr:0,rec:0,sleep:2}[m], a=[];
+    for(var i=0;i<pts;i++){ var w=Math.sin(i*1.3+m.length)*0.55+Math.sin(i*0.5+2)*0.45; a.push(+(v+amp*w*0.5).toFixed(dec)); }
+    return a;
+  }
+  function applyRange(days){
+    var d=kpiVals[days]||kpiVals['30'], pts=days==='7'?7:days==='30'?30:days==='90'?45:52;
+    ['hrv','rhr','rec','sleep'].forEach(function(m){
+      spark[m]=genSpark(d[m],m,pts);
+      var ve=document.getElementById('v-'+m); if(ve) ve.innerHTML=d[m]+'<span class="unit">'+units2[m]+'</span>';
+      var de=document.getElementById('dd-'+m); if(de){ de.className='delta '+d.d[m][1]; de.textContent=d.d[m][0]; }
+    });
+    drawAll();
+  }
+  document.getElementById('range').addEventListener('change',function(e){ applyRange(e.target.value); });
+
+  /* ---------- mobile menu ---------- */
+  document.getElementById('menu').addEventListener('click',function(){ document.querySelector('.rail').classList.toggle('open'); });
+
+  /* ---------- interactive budget ---------- */
+  var bslider=document.getElementById('budgetslider');
+  if(bslider) bslider.addEventListener('input',function(e){ groceryBudget=+e.target.value; renderNutrition(); });
+  var bfit=document.getElementById('budgetfit');
+  if(bfit) bfit.addEventListener('click',function(){ budgetMode=!budgetMode; renderNutrition(); });
+
+  /* ---------- coach input ---------- */
+  var chat=document.getElementById('chat');
+  function coachReply(q){
+    q=q.toLowerCase();
+    if(/bio.?age|phenoage|younger|aging|epigenetic/.test(q)) return 'Your <b>PhenoAge is 29.6</b> vs chronological 38 — the Levine 2018 clock from 9 blood markers (albumin, hs-CRP, glucose, creatinine, lymphocyte %, MCV, RDW, ALP, WBC). It is mortality-calibrated, so it is meaningful — but it is a single snapshot. CRP dropping under 0.5 and triglycerides normalizing are what pulled it down. Retest Oct 2026 to confirm the trajectory. <span class="evi">B</span>';
+    if(/apob|ldl|cholesterol|heart/.test(q)) return 'Your <b>ApoB 101</b> is the live cardiovascular lever (LDL/ApoB 1.13 = small, dense particles). Bergamot + CholestePure are staged; the biggest add is real Zone-2 volume. Lp(a) 13 is protective, so this is modifiable. <span class="evi">B</span>';
+    if(/rem|sleep|deep/.test(q)) return 'REM is 13% (low). Your own data pins it on <b>late-night THC + mid-night eating</b> — both suppress REM. Fix sleep consistency (53%) before any sleep supplement; that is the highest-effect lever. <span class="evi">A · your data</span>';
+    if(/ferritin|iron|hfe/.test(q)) return 'Ferritin 210 is creeping (+11%) and you are an <b>HFE carrier</b> — keep donating on schedule, IP6 at 3pm, Vitamin C fasted only. Target under 100. <span class="evi">B</span>';
+    if(/creatine/.test(q)) return 'Creatine 5g/day fits you well — DRD4/DRD5 dopamine variants plus muscle and cognitive upside, and it does not touch your iron or liver flags. Safe to keep daily. <span class="evi">A</span>';
+    if(/supplement|stack|add|take|should i/.test(q)) return 'Before adding anything: you have missed NAC 4 days (ALT context) and sleep consistency is the rate-limiter. Fix adherence and sleep first, then reassess at the next panel rather than stacking more. <span class="evi">B</span>';
+    return 'Grounded on your data, the three things moving your numbers most are <b>ApoB</b> (heart), <b>sleep consistency</b> (HRV), and <b>ferritin</b> (iron). Ask about any of them and I will pull the specifics. <span class="evi">B</span>';
+  }
+  function sendCoach(){
+    var inp=document.getElementById('coachin'), q=(inp.value||'').trim(); if(!q) return;
+    var u=document.createElement('div'); u.className='bubble me'; u.textContent=q; chat.appendChild(u);
+    var a=document.createElement('div'); a.className='bubble ai';
+    a.innerHTML='<div class="toolrow"><span class="toolchip">searchKnowledge()</span><span class="toolchip">getBiomarker()</span><span class="toolchip">getWhoopTrend()</span></div><p style="margin:0">'+coachReply(q)+'</p>';
+    chat.appendChild(a); inp.value=''; a.scrollIntoView({behavior:'smooth',block:'end'});
+  }
+  document.getElementById('coachsend').addEventListener('click',sendCoach);
+  document.getElementById('coachin').addEventListener('keydown',function(e){ if(e.key==='Enter') sendCoach(); });
+  var corrSel=document.getElementById('corrsel'); if(corrSel) corrSel.addEventListener('change',function(e){ renderCorr(e.target.value); });
+  var coachSug=document.getElementById('coachsuggest'); if(coachSug) coachSug.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return; document.getElementById('coachin').value=b.textContent; sendCoach(); });
+
+  /* ---------- macro tracker + food photo ---------- */
+  var macroTargets={kcal:2300,p:180,c:190,f:90,fiber:40};
+  var consumed={kcal:520,p:38,c:64,f:18,fiber:9};
+  var foodLog=[{img:'',name:'Oats + pea protein + berries',kcal:520,p:38,time:'10:05 AM'}];
+  var sampleFoods=[
+    {name:'Salmon, sweet potato, brussels sprouts',kcal:640,p:44,c:52,f:26},
+    {name:'Chicken, green lentils, cabbage',kcal:700,p:50,c:60,f:22},
+    {name:'Apple, walnuts, bone broth',kcal:300,p:18,c:28,f:14},
+    {name:'Matcha + collagen',kcal:90,p:9,c:3,f:3}
+  ];
+  var sampleIdx=0;
+  var blankImg='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22%3E%3Crect width=%2244%22 height=%2244%22 rx=%228%22 fill=%22%23647089%22 opacity=%22.35%22/%3E%3C/svg%3E';
+  function renderTracker(){
+    var host=document.getElementById('trackbars'); if(!host) return; host.innerHTML=''; var c=C();
+    [['Calories','kcal',''],['Protein','p','g'],['Carbs','c','g'],['Fat','f','g'],['Fiber','fiber','g']].forEach(function(d){
+      var cur=consumed[d[1]], tg=macroTargets[d[1]], pct=Math.min(100,cur/tg*100);
+      var col=pct<90?c.accent:pct<=106?c.good:c.warn;
+      var row=document.createElement('div'); row.className='trackbar';
+      row.innerHTML='<span class="tl">'+d[0]+'</span><span class="tt"><i style="width:'+pct+'%; background:'+col+'"></i></span><span class="tv">'+Math.round(cur)+' / '+tg+d[2]+'</span>';
+      host.appendChild(row);
+    });
+    var log=document.getElementById('foodlog'); if(!log) return; log.innerHTML='';
+    foodLog.forEach(function(f){
+      var row=document.createElement('div'); row.className='foodrow';
+      row.innerHTML='<img src="'+(f.img||blankImg)+'" alt=""><div class="fi"><b>'+f.name+'</b><div class="fm">'+f.kcal+' kcal · '+f.p+'g protein</div></div><div class="fm">'+f.time+'</div>';
+      log.appendChild(row);
+    });
+  }
+  var foodOverlay=document.getElementById('foodoverlay');
+  function resetFood(){ var pv=document.getElementById('foodpreview'); pv.style.display='none'; pv.src=''; ['fname','fk','fp','fc','ff'].forEach(function(id){var e=document.getElementById(id); if(e) e.value='';}); }
+  function openFood(){ resetFood(); modalOpen(foodOverlay); }
+  function closeFood(){ modalClose(foodOverlay); }
+  document.getElementById('snapmeal').addEventListener('click',openFood);
+  document.getElementById('photodrop').addEventListener('click',function(){ document.getElementById('foodphoto').click(); });
+  document.getElementById('foodphoto').addEventListener('change',function(e){
+    var file=e.target.files&&e.target.files[0]; if(!file) return;
+    var rd=new FileReader(); rd.onload=function(){ var pv=document.getElementById('foodpreview'); pv.src=rd.result; pv.style.display='block'; }; rd.readAsDataURL(file);
+  });
+  document.getElementById('analyze').addEventListener('click',function(){
+    var s=sampleFoods[sampleIdx%sampleFoods.length]; sampleIdx++;
+    document.getElementById('fname').value=s.name; document.getElementById('fk').value=s.kcal;
+    document.getElementById('fp').value=s.p; document.getElementById('fc').value=s.c; document.getElementById('ff').value=s.f;
+  });
+  document.getElementById('foodcancel').addEventListener('click',closeFood);
+  document.getElementById('foodclose').addEventListener('click',closeFood);
+  foodOverlay.addEventListener('click',function(e){ if(e.target===foodOverlay) closeFood(); });
+  document.getElementById('foodsave').addEventListener('click',function(){
+    var name=document.getElementById('fname').value||'Logged meal';
+    var k=+document.getElementById('fk').value||0, p=+document.getElementById('fp').value||0, cc=+document.getElementById('fc').value||0, ff=+document.getElementById('ff').value||0;
+    var pv=document.getElementById('foodpreview'), img=(pv.style.display!=='none' && pv.src)?pv.src:'';
+    foodLog.unshift({img:img,name:name,kcal:k,p:p,time:'just now'});
+    consumed.kcal+=k; consumed.p+=p; consumed.c+=cc; consumed.f+=ff; consumed.fiber+=Math.round(cc*0.06);
+    closeFood(); renderTracker();
+    var t=document.getElementById('toast'); t.textContent='✓ Meal logged'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show'); t.textContent='✓ Saved to your dashboard';},1600);
+  });
+
+  /* ---------- peptides ---------- */
+  var ACTIVE_PEPTIDES=[
+    {id:'ss31',name:'SS-31',aka:'Elamipretide',cat:'Mitochondrial / longevity',
+     mcg:250,mg:0.25,units:10,mL:0.10,timing:'Morning · pre-exercise',route:'SubQ',
+     cycle:'ON · continuous',cyclecol:'good', vial_mg:5,bac_mL:2,conc:2.5,mcgU:25,
+     recon:'Jun 28',expires:'Jul 27',dosesLeft:18,dosesTotal:20,half:'~4 h',store:'Fridge 2–8°C',
+     gene:'SCO2/TSFM',next:'today 7:30 AM · R-abdomen',note:'Cardiolipin-targeted mito repair. Reference dose — confirm yours.'},
+    {id:'ghkcu',name:'GHK-Cu',aka:'Copper peptide',cat:'Longevity / skin repair',
+     mcg:1000,mg:1.0,units:40,mL:0.40,timing:'Morning (or topical PM)',route:'SubQ',
+     cycle:'ON · 5-on / 2-off',cyclecol:'good', vial_mg:5,bac_mL:2,conc:2.5,mcgU:25,
+     recon:'Jun 28',expires:'Jul 27',dosesLeft:5,dosesTotal:5,half:'~12 h',store:'Fridge 2–8°C',
+     gene:'SMAD3/IL36RN',next:'tomorrow 7:30 AM · L-thigh',note:'Collagen + anti-inflammatory. Keep oral copper ≤1 mg; test ceruloplasmin.'}
+  ];
+  var RETIRED=[
+    ['Sermorelin','redundant with CJC/Ipa'],['CJC-1295 / Ipamorelin','GH stack paused — HRV-suppression suspect'],
+    ['DSIP','sleep peptide — paused'],['NA-Selank','not essential'],['NA-Semax','paused'],
+    ['MOTS-c','paused'],['Retatrutide','paused'],['Epitalon','cycle paused'],
+    ['Cerebrolysin','weak evidence in healthy adults'],['Glow Stack','GHK-Cu kept, rest dropped']
+  ];
+  var SITES=['L-abdomen','R-abdomen','L-thigh','R-thigh','L-delt','R-delt','Glute'], siteIdx=0;
+  function pcell(v,l){ return '<div class="dosecell"><div class="dv">'+v+'</div><div class="dl">'+l+'</div></div>'; }
+  function pepCard(p){
+    return '<div class="pepcard"><div class="ph"><div><div class="pname">'+p.name+' <span class="paka">'+p.aka+'</span></div>'+
+      '<div class="sub" style="margin-top:3px">'+p.cat+'</div></div><span class="cyclepill s-'+p.cyclecol+'">'+p.cycle+'</span></div>'+
+      '<div class="pepbody"><div class="doseecho">'+pcell(p.mcg,'mcg')+pcell(p.mg,'mg')+pcell(p.units,'units')+pcell(p.mL,'mL')+'</div>'+
+      '<div class="sub" style="margin:-2px 0 8px">'+p.timing+' · '+p.route+' · <span style="color:var(--warn)">reference dose — confirm</span></div>'+
+      '<div class="peprow"><span class="k">Vial</span><span>'+p.vial_mg+' mg + '+p.bac_mL+' mL BAC → '+p.conc+' mg/mL ('+p.mcgU+' mcg/u)</span></div>'+
+      '<div class="peprow"><span class="k">Doses left</span><span class="num" style="color:'+(p.dosesLeft<=5?'var(--warn)':'var(--text)')+'">'+p.dosesLeft+' / '+p.dosesTotal+'</span></div>'+
+      '<div class="peprow"><span class="k">Reconstituted</span><span>'+p.recon+' · expires '+p.expires+'</span></div>'+
+      '<div class="peprow"><span class="k">Half-life · storage</span><span>'+p.half+' · '+p.store+'</span></div>'+
+      '<div class="peprow"><span class="k">Gene target</span><span class="tag gene" style="display:inline-block">'+p.gene+'</span></div>'+
+      '<div class="pepnext"><div><div class="eyebrow" style="color:var(--accent)">Next dose</div><div style="font-weight:600; margin-top:2px">'+p.next+'</div></div>'+
+      '<button class="addbtn logbtn" data-id="'+p.id+'">Log injection</button></div>'+
+      '<div class="sub" style="margin-top:10px">'+p.note+'</div></div></div>';
+  }
+  function renderPeptides(){ var g=document.getElementById('pepgrid'); if(!g) return; g.innerHTML=ACTIVE_PEPTIDES.map(pepCard).join(''); }
+  function renderSchedule(){
+    var g=document.getElementById('schedgrid'); if(!g) return; g.innerHTML='';
+    ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(function(dn,i){
+      var ghk=i<5, off=!ghk;
+      var dots='<span class="pdot" style="background:var(--accent-weak); color:var(--accent)">SS-31</span>'+(ghk?'<span class="pdot" style="background:var(--good-weak); color:var(--good)">GHK-Cu</span>':'<span class="pdot" style="background:var(--panel-2); color:var(--muted-solid)">rest</span>');
+      var d=document.createElement('div'); d.className='schedday'+(off?' off':''); d.innerHTML='<div class="dn">'+dn+'</div>'+dots; g.appendChild(d);
+    });
+  }
+  function renderSites(){
+    var w=document.getElementById('sitewrap'); if(!w) return; w.innerHTML='';
+    SITES.forEach(function(s,i){
+      var next=(i===siteIdx%SITES.length), el=document.createElement('span'); el.className='site'+(next?' next':'');
+      el.textContent=(next?'▶ ':'')+s; w.appendChild(el);
+    });
+  }
+  function renderRetired(){ var h=document.getElementById('retlist'); if(!h) return;
+    h.innerHTML=RETIRED.map(function(r){ return '<div class="ret"><b style="color:var(--text)">'+r[0]+'</b><span>'+r[1]+'</span></div>'; }).join(''); }
+  function pcalc(){
+    var v=+document.getElementById('cVial').value||0, b=+document.getElementById('cBac').value||0, dz=+document.getElementById('cDose').value||0;
+    var conc=b?v/b:0, mcgU=b?v*10/b:0, units=mcgU?dz/mcgU:0, ml=units/100;
+    document.getElementById('calcout').innerHTML=pcell(conc.toFixed(2),'mg/mL')+pcell(mcgU.toFixed(0),'mcg/unit')+pcell(units.toFixed(1),'units')+pcell(ml.toFixed(2),'mL');
+  }
+  ['cVial','cBac','cDose'].forEach(function(id){ var e=document.getElementById(id); if(e) e.addEventListener('input',pcalc); });
+  document.getElementById('pepgrid').addEventListener('click',function(e){
+    var b=e.target.closest('.logbtn'); if(!b) return;
+    var p=ACTIVE_PEPTIDES.filter(function(x){return x.id===b.dataset.id;})[0];
+    if(p && p.dosesLeft>0) p.dosesLeft--;
+    siteIdx=(siteIdx+1)%SITES.length; renderPeptides(); renderSites();
+    var t=document.getElementById('toast'); t.textContent='✓ Injection logged'+(p?' · '+p.name:''); t.classList.add('show'); setTimeout(function(){t.classList.remove('show'); t.textContent='✓ Saved to your dashboard';},1500);
+  });
+  var pepOverlay=document.getElementById('pepoverlay');
+  function closePep(){ modalClose(pepOverlay); }
+  document.getElementById('pepadd').addEventListener('click',function(){ modalOpen(pepOverlay); });
+  document.getElementById('pepphoto').addEventListener('click',function(){ modalOpen(pepOverlay); });
+  document.getElementById('pepdrop').addEventListener('click',function(){ document.getElementById('pepphotoin').click(); });
+  document.getElementById('pepphotoin').addEventListener('change',function(e){ var f=e.target.files&&e.target.files[0]; if(!f) return; var rd=new FileReader(); rd.onload=function(){ var pv=document.getElementById('peppreview'); pv.src=rd.result; pv.style.display='block'; }; rd.readAsDataURL(f); });
+  document.getElementById('pepclose').addEventListener('click',closePep);
+  document.getElementById('pepcancel').addEventListener('click',closePep);
+  pepOverlay.addEventListener('click',function(e){ if(e.target===pepOverlay) closePep(); });
+  document.getElementById('pepsave').addEventListener('click',function(){
+    var name=document.getElementById('pName').value||'New peptide';
+    var mcg=+document.getElementById('pDose').value||0, vial=+document.getElementById('pVial').value||5, bac=+document.getElementById('pBac').value||2;
+    var mcgU=bac?vial*10/bac:0, units=mcgU?mcg/mcgU:0, per=(mcg?Math.floor(vial*1000/mcg):0);
+    ACTIVE_PEPTIDES.push({id:'p'+Date.now(),name:name,aka:'custom',cat:document.getElementById('pCat').value||'Custom',
+      mcg:mcg,mg:+(mcg/1000).toFixed(3),units:+units.toFixed(1),mL:+(units/100).toFixed(2),
+      timing:document.getElementById('pTiming').value||'—',route:document.getElementById('pRoute').value,
+      cycle:document.getElementById('pCycle').value||'ON',cyclecol:'good',
+      vial_mg:vial,bac_mL:bac,conc:+(bac?vial/bac:0).toFixed(2),mcgU:+mcgU.toFixed(0),
+      recon:'today',expires:'+30 d',dosesLeft:per,dosesTotal:per,half:'—',store:'Fridge 2–8°C',gene:'—',next:'set schedule',note:'Added by you.'});
+    closePep(); renderPeptides();
+    var t=document.getElementById('toast'); t.textContent='✓ Peptide added'; t.classList.add('show'); setTimeout(function(){t.classList.remove('show'); t.textContent='✓ Saved to your dashboard';},1500);
+  });
+
+  /* ---------- fitness ---------- */
+  var zones=[['Z1 recovery',15,'accent'],['Z2 aerobic',46,'good'],['Z3 tempo',20,'accent'],['Z4 threshold',14,'warn'],['Z5 max',5,'bad']];
+  var fitPlan=[['Mon','Z2 45m','good'],['Tue','Strength','accent'],['Wed','Z2 45m','good'],['Thu','Mobility','muted'],['Fri','Strength','accent'],['Sat','Z2 long 60m','good'],['Sun','Rest','muted']];
+  var workouts=[
+    {d:'Jul 2',t:'Zone-2 ride',dur:'2h30m',strain:11.4,avg:133,max:148,flag:0},
+    {d:'Jul 1',t:'Strength',dur:'50m',strain:11.2,avg:128,max:152,flag:0},
+    {d:'Jun 30',t:'Yoga',dur:'40m',strain:9.8,avg:132,max:163,flag:1},
+    {d:'Jun 29',t:'Zone-2 run',dur:'40m',strain:8.4,avg:138,max:149,flag:0}
+  ];
+  function renderFitness(){
+    var z=document.getElementById('fitzones'); if(!z) return; z.innerHTML='';
+    zones.forEach(function(zz){ var col=css('--'+zz[2]); var row=document.createElement('div'); row.className='trackbar';
+      row.innerHTML='<span class="tl" style="width:100px">'+zz[0]+'</span><span class="tt"><i style="width:'+zz[1]+'%; background:'+col+'"></i></span><span class="tv">'+zz[1]+'%</span>'; z.appendChild(row); });
+    var p=document.getElementById('fitplan'); if(p){ p.innerHTML='';
+      fitPlan.forEach(function(d){ var mut=d[2]==='muted', col=mut?'var(--muted-solid)':'var(--'+d[2]+')', bg=mut?'var(--panel-2)':'var(--'+d[2]+'-weak)';
+        var el=document.createElement('div'); el.className='schedday'; el.innerHTML='<div class="dn">'+d[0]+'</div><span class="pdot" style="background:'+bg+'; color:'+col+'">'+d[1]+'</span>'; p.appendChild(el); }); }
+    var tb=document.querySelector('#fittable tbody'); if(tb){ tb.innerHTML='';
+      workouts.forEach(function(w){ var tr=document.createElement('tr');
+        tr.innerHTML='<td class="num">'+w.d+'</td><td><b>'+w.t+'</b></td><td class="num">'+w.dur+'</td><td class="num">'+w.strain+'</td><td class="num">'+w.avg+'</td><td class="num" style="color:'+(w.max>=160?'var(--bad)':'var(--text)')+'">'+w.max+'</td><td>'+(w.flag?'<span class="statuspill s-bad">Z4 drift</span>':'<span class="statuspill s-good">clean</span>')+'</td>';
+        tb.appendChild(tr); }); }
+  }
+  var lw=document.getElementById('logworkout'); if(lw) lw.addEventListener('click',function(){ openModal('workout'); });
+
+  /* ---------- init ---------- */
+  renderLabs('all'); renderHomeFlags(); renderGenes(); renderFoods(); renderCorr(); renderPheno();
+  renderNutrition(); renderSupps(); renderSuggest('imp'); renderGoals(); renderTracker();
+  renderPeptides(); renderSchedule(); renderSites(); renderRetired(); pcalc(); renderFitness();
+  a11yEnhance();
+  requestAnimationFrame(drawAll);
+  addEventListener('resize',function(){ requestAnimationFrame(drawAll); });
+})();
+</script>

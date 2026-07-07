@@ -4,6 +4,8 @@ An all-in-one **personal longevity dashboard** — genetics, lab biomarkers, gut
 
 **▶ Live demo:** https://colby-source.github.io/longevity-os/
 
+![Longevity OS — Command Center](og.png)
+
 > **Sample data.** This public demo uses de-identified, illustrative numbers — it is **not a real person's records** and is **not medical advice**. Educational only.
 
 ## 🧠 Build YOUR version — in your own Claude (nothing installed, nothing stored)

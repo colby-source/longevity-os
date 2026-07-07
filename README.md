@@ -11,12 +11,14 @@ An all-in-one **personal longevity dashboard** — genetics, lab biomarkers, gut
 ## 🧠 Build YOUR version — in your own Claude (nothing installed, nothing stored)
 The demo shows sample data. To get **your** dashboard, you use **Claude** as the engine: upload your own health files (WHOOP export, labs, DNA, gut report, supplement photos) and Claude reads them, builds your personalized dashboard, and becomes your coach. Your data stays in **your** Claude account.
 
-**→ Full guide: [`setup/SETUP_GUIDE.md`](setup/SETUP_GUIDE.md)**  ·  10 minutes, no coding.
+**→ Full step-by-step guide: [`setup/SETUP_GUIDE.md`](setup/SETUP_GUIDE.md)**  ·  10 minutes, no coding.
 
 - **Have Claude Pro?** Create a Project with [`setup/PROJECT_INSTRUCTIONS.md`](setup/PROJECT_INSTRUCTIONS.md) + [`setup/dashboard-template.html`](setup/dashboard-template.html).
 - **Free Claude?** Paste [`setup/MASTER_PROMPT.md`](setup/MASTER_PROMPT.md) into a new chat and upload your files.
 
 Then say **"build my dashboard"** → Claude parses everything and renders your real numbers.
+
+**Want live WHOOP sync + an API-powered coach?** See **[`setup/INTEGRATIONS.md`](setup/INTEGRATIONS.md)** — how to create your own WHOOP developer app, add your Claude API key, and connect Oura/CGM later. *(That's the full self-hosted app; the no-code guide above uses file exports and works today.)*
 
 ## What it shows
 - **Command Center** — biological age (PhenoAge), longevity score, today's readiness, top flags

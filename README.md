@@ -31,7 +31,7 @@ Then say **"build my dashboard"** → Claude parses everything and renders your 
 - **Fitness** — training load, HR-zone distribution, weekly plan
 - **Suggestions** — ranked across all data, including supplement/peptide overlaps
 - **Trends** — bio-age PhenoAge breakdown + interactive N-of-1 correlation engine
-- **AI Doctor** — grounded coach chat (demo replies; wires to the Claude API in the full build)
+- **AI Expert** — grounded coach chat (demo replies; wires to the Claude API in the full build)
 
 ## Make it yours
 - Swap the floating call-to-action link: in `index.html`, replace `https://YOUR-LINK-HERE` with your community / link-in-bio URL.

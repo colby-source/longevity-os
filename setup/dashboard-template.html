@@ -349,7 +349,7 @@
       <div class="navgroup">Intelligence</div>
       <button class="navitem" data-view="suggestions"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 00-4 10c1 1 1 2 1 3h6c0-1 0-2 1-3a6 6 0 00-4-10z"/></svg>Suggestions</button>
       <button class="navitem" data-view="trends"><svg viewBox="0 0 24 24"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 4-6"/></svg>Trends · N-of-1</button>
-      <button class="navitem" data-view="coach"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H8l-4 4V5a2 2 0 012-2h13a2 2 0 012 2z"/></svg>AI Doctor</button>
+      <button class="navitem" data-view="coach"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H8l-4 4V5a2 2 0 012-2h13a2 2 0 012 2z"/></svg>AI Expert</button>
     </nav>
     <div class="foot">Self-hosted · your data stays on your deploy. Not medical advice.</div>
   </aside>
@@ -1220,7 +1220,7 @@
     gut:['Gut · Viome','microbiome scores + food engine'],protocol:['Protocol','39-item stack · interaction-aware'],
     nutrition:['Nutrition · Meal Plan','Viome-constrained meals + groceries on sale'],fitness:['Fitness','training load · zones · plan'],supplements:['Supplements','inventory · spend · reorder'],peptides:['Peptides','injectable protocol · reconstitution · cycling'],
     goals:['Goals','targets that move biological age'],suggestions:['Suggestions','ranked across all your data'],
-    coach:['AI Longevity Doctor','grounded in your data + knowledge base'],trends:['Trends · N-of-1','intervention → outcome effect sizes'],
+    coach:['AI Longevity Expert','grounded in your data + knowledge base'],trends:['Trends · N-of-1','intervention → outcome effect sizes'],
     onboard:['Setup','get your dashboard ready']};
   function showView(v){
     document.querySelectorAll('.navitem').forEach(function(n){n.classList.toggle('active', n.dataset.view===v);});

@@ -5,9 +5,9 @@ Longevity OS has **two ways** to get your data in. Start with #1 (works today, z
 | # | Method | Works today? | Setup effort |
 |---|---|---|---|
 | 1 | **File export → Claude** (WHOOP CSV, lab PDF, DNA txt, Viome PDF, supplement photo) | ✅ Yes — this is the [SETUP_GUIDE](SETUP_GUIDE.md) path | 10 min, no coding |
-| 2 | **Live API sync** (WHOOP auto-syncs daily; AI Doctor streams from Claude) | ⏳ Requires the full self-host app (see roadmap) | Developer keys + hosting |
+| 2 | **Live API sync** (WHOOP auto-syncs daily; AI Expert streams from Claude) | ⏳ Requires the full self-host app (see roadmap) | Developer keys + hosting |
 
-> **Honest status:** the public demo and the Claude kit use **method #1 (exports)**. The "WHOOP synced 2m ago" and live AI Doctor you see in the demo are what the **full app** does — that app is on the roadmap, not in this repo yet. Everything below is the setup for when you run that app (or build it with Claude). If you just want your dashboard now, you don't need any of this — use [SETUP_GUIDE](SETUP_GUIDE.md).
+> **Honest status:** the public demo and the Claude kit use **method #1 (exports)**. The "WHOOP synced 2m ago" and live AI Expert you see in the demo are what the **full app** does — that app is on the roadmap, not in this repo yet. Everything below is the setup for when you run that app (or build it with Claude). If you just want your dashboard now, you don't need any of this — use [SETUP_GUIDE](SETUP_GUIDE.md).
 
 ---
 
@@ -47,7 +47,7 @@ Open your dashboard → **Settings → Connect WHOOP** → it sends you to WHOOP
 
 ---
 
-## 2. The AI Doctor — add your Claude API key
+## 2. The AI Expert — add your Claude API key
 
 The chat coach in the full app streams from Claude. To power it on your own instance:
 1. Go to **console.anthropic.com** → **API Keys** → **Create Key** → copy it (starts with `sk-ant-`).
@@ -57,7 +57,7 @@ The chat coach in the full app streams from Claude. To power it on your own inst
    ```
    (or Vercel → Environment Variables). You pay Anthropic directly for your own usage; nobody else can see or use your key.
 
-> **You can skip this** and use the free Claude-kit path instead ([SETUP_GUIDE](SETUP_GUIDE.md) Path A/B) — that runs the "AI doctor" inside your normal claude.ai chat with no API key at all.
+> **You can skip this** and use the free Claude-kit path instead ([SETUP_GUIDE](SETUP_GUIDE.md) Path A/B) — that runs the "AI Expert" inside your normal claude.ai chat with no API key at all.
 
 ---
 
